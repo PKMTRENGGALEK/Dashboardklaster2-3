@@ -3,16 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PKM TGLK</title>
+    <title>CKG PKM TGLK</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
     <style>
-      html,
-      body {
-        height: 100%;
-      }
       .circle-wrapper {
         position: relative;
         width: 100%;
@@ -28,7 +25,7 @@
 
       .doctor-image {
         position: absolute;
-        top: -50px;
+        top: -90px;
         left: 50%;
         transform: translateX(-50%);
         width: 220px;
@@ -43,7 +40,7 @@
       <div class="container mx-auto flex flex-wrap justify-between items-center p-4">
         <div class="flex items-center space-x-2">
           <span class="text-pink-500 text-2xl font-bold">➕</span>
-          <h1 class="text-pink-500 text-2xl font-bold">Puskesmas Trenggalek</h1>
+          <h1 class="text-pink-500 text-2xl font-bold">CKG Puskesmas Trenggalek</h1>
         </div>
         <ul class="flex space-x-4 text-gray-700 text-sm sm:text-base">
           <li><a href="#" class="hover:text-pink-500 font-medium">Home</a></li>
@@ -53,43 +50,37 @@
       </div>
     </nav>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <main class="flex-grow mt-6">
-      <section
-        class="container mx-auto mt-6 px-4 flex flex-col-reverse md:flex-row items-center justify-between"
-      >
-        <!-- Left -->
-        <div class="md:w-1/2 mb-8 md:mb-0">
-          <h2 class="text-3xl md:text-5xl font-bold mb-6 text-center text-green-600">
-            Data CKG PKG
-          </h2>
-
-          <div class="flex flex-wrap justify-center gap-3">
-            <a href="karangsoko.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-pink-500 hover:bg-pink-600 transition text-center">DESA KARANGSOKO</a>
-            <a href="sambirejo.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-indigo-600 hover:bg-indigo-700 transition text-center">DESA SAMBIREJO</a>
-            <a href="sumbergedong.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-yellow-500 hover:bg-yellow-600 transition text-center">KEL. SUMBERGEDONG</a>
-            <a href="ngantru.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-red-500 hover:bg-red-600 transition text-center">KEL. NGANTRU</a>
-            <a href="kelutan.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-yellow-500 hover:bg-yellow-600 transition text-center">KEL. KELUTAN</a>
-            <a href="tamanan.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-red-500 hover:bg-red-600 transition text-center">KEL. TAMANAN</a>
-            <a href="induk.html" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-green-600 hover:bg-green-700 transition text-center">INDUK</a>
-            <a href="https://pkmtrenggalek.github.io/rekapklaster2/" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-pink-600 hover:bg-pink-700 transition text-center">REKAP BIDAN</a>
-            <a href="https://pkmtrenggalek.github.io/LaporanPerawat/" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-full text-white font-semibold bg-indigo-600 hover:bg-indigo-700 transition text-center">REKAP PERAWAT</a>
+      <section class="container mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between gap-10">
+        
+        <!-- Peta dan Tombol -->
+        <div class="w-full md:w-1/2 relative">
+          <img src="peta.jpeg" alt="Peta Wilayah" class="w-full h-auto rounded-lg shadow" />
+          
+          <!-- Tombol wilayah -->
+          <div id="button-container" class="absolute inset-0 text-xs sm:text-sm">
+            <a href="karangsoko.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 80%; left: 45%;">DESA KARANGSOKO</a>
+            <a href="sambirejo.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 58%; left: 59%;">DESA SAMBIREJO</a>
+            <a href="sumbergedong.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 38%; left: 60%;">KEL. SUMBERGEDONG</a>
+            <a href="ngantru.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 10%; left: 35%;">KEL. NGANTRU</a>
+            <a href="kelutan.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 52%; left: 38%;">KEL. KELUTAN</a>
+            <a href="tamanan.html" class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow" style="top: 35%; left: 23%;">KEL. TAMANAN</a>
           </div>
         </div>
 
-        <!-- Right -->
-        <div class="circle-wrapper mb-8 md:mb-0">
-          <img src="dr.murti.png" alt="Dr. Murti" class="doctor-image" />
+        <!-- Dokter dan Tombol -->
+        <div class="w-full md:w-1/2 flex flex-col items-center space-y-6 pt-2">
+          <div class="circle-wrapper">
+            <img src="dr.murti.png" alt="Dr. Murti" class="doctor-image" />
+          </div>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="induk.html" class="px-6 py-3 rounded-full text-white font-semibold bg-green-600 hover:bg-green-700 transition">INDUK</a>
+            <a href="https://pkmtrenggalek.github.io/rekapklaster2/" target="_blank" class="px-6 py-3 rounded-full text-white font-semibold bg-pink-600 hover:bg-pink-700 transition">REKAP BIDAN</a>
+            <a href="https://pkmtrenggalek.github.io/LaporanPerawat/" target="_blank" class="px-6 py-3 rounded-full text-white font-semibold bg-indigo-600 hover:bg-indigo-700 transition">REKAP PERAWAT</a>
+          </div>
         </div>
       </section>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4 mt-12">
-      <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center px-4 text-sm space-y-2 sm:space-y-0">
-        <div>©  Puskesmas Trenggalek, All rights reserved.</div>
-        <div>| 2025</div>
-      </div>
-    </footer>
   </body>
 </html>
