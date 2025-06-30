@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CKG PKM TGLK</title>
+
+    <!-- Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+    <style>
+      html, body {
+        height: 100%;
+        font-size: 14px;
+      }
+      #rekapTable tbody {
+        font-size: 0.85rem;
+      }
+      #loadingSpinner {
+        display: none;
+      }
+      .card-lansia {
+        position: relative;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        overflow: hidden;
+        padding: 1.5rem;
+        min-width: 300px;
+      }
+
+      .card-lansia::before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: #e9f7fa;
+        border-radius: 50%;
+        top: -50px;
+        right: -50px;
+        z-index: 0;
+      }
+
+      .card-lansia .content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .card-lansia h6 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .card-lansia .total {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .card-lansia .subtext {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+
+      .card-lansia .bar-labels {
+        font-size: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+      }
+
+         .bar-container {
+      height: 6px;
+      width: 100%;
+      background: #e9ecef;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bar-sudah { background: #20c997; width: 0%; height: 100%; transition: width .5s ease; }
+    .bar-belum { background: #dc3545; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-800">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky-top p-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <span class="text-danger fw-bold me-2 fs-4">➕</span>
+        <h5 class="mb-0 text-danger fw-bold">Puskesmas Trenggalek</h5>
+      </div>
+      <a href="index.html" class="btn btn-outline-danger btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container py-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">Data Rekap CKG DENY WAHYU PURNOMO, Amd.Kep.</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <div id="loadingSpinner" class="text-center my-3">
+              <div class="spinner-border text-danger" role="status"></div>
+              <p class="mt-2">Memuat data...</p>
+            </div>
+            <div class="mb-3">
+              <label for="bulanFilterRekapTable" class="form-label fw-bold">Filter Bulan (Rekap Table)</label>
+              <select id="bulanFilterRekapTable" class="form-select form-select-sm w-auto">
+                <option value="">- Semua Bulan -</option>
+              </select>
+            </div>
+            <table id="rekapTable" class="table table-bordered w-100">
+              <thead class="table-light">
+                <tr></tr>
+              </thead>
+            </table>
+            <button onclick="exportRekapTableToExcel()" class="btn btn-success mt-3">📄 Export Tabel Utama ke Excel</button>
+          </div>
+        </div>
+      </div>
+      <script>
+        function exportRekapTableToExcel() {
+            const table = document.getElementById("rekapTable");
+
+            if (!table) {
+              alert("Tabel tidak ditemukan!");
+              return;
+            }
+
+            const html = `
+              <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                    xmlns:x="urn:schemas-microsoft-com:office:excel" 
+                    xmlns="http://www.w3.org/TR/REC-html40">
+              <head><meta charset="UTF-8"></head>
+              <body><table border="1">${table.innerHTML}</table></body>
+              </html>
+            `;
+
+            const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Rekap_CKG_Deny Wahyu Purnomo.xls";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+
+      </script>
+     <!-- Filter & Rekap -->
+<div class="card shadow-sm mt-4">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">Rekap Capaian</h6>
+    <select id="filterBulan" class="form-select form-select-sm w-auto">
+      <option value="">- Semua Bulan -</option>
+    </select>
+  </div>
+  <div class="card-body p-3">
+    <div class="table-responsive">
+      <table id="tabelfilter" class="table table-bordered table-sm mb-0">
+        <thead class="table-secondary text-center">
+          <tr>
+            <th rowspan="2">NO</th>
+            <th rowspan="2">DESA</th>
+            <th colspan="2">CAPAIAN</th>
+          </tr>
+          <tr>
+            <th>LANSIA</th>
+            <th>DEWASA</th>
+          </tr>
+        </thead>
+        <tbody id="rekapBody" class="text-center small"></tbody>
+        <tfoot class="fw-bold text-center">
+          <tr>
+            <td colspan="2">TOTAL</td>
+            <td id="totalLansia">0</td>
+            <td id="totalDewasa">0</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button onclick="exportRekapToExcel()" class="btn btn-success mt-3">📄 Export Rekap ke Excel</button>
+
+      <!-- Grafik -->
+      <div class="mt-4">
+        <canvas id="rekapChart" height="100"></canvas>
+      </div>
+      <!-- recaps -->
+       <div class="container mt-2 mb-2">
+      <div class="card-lansia mx-auto shadow" style="max-width: 400px;">
+        <div class="content">
+          <h6>Lansia</h6>
+          <div class="total" id="totalLansiaText">--</div>
+      <div class="subtext" id="percentLansia">-- % dari Total</div>
+          <div class="bar-labels">
+            <div class="text-success">Sudah didata <strong id="sudahText">0 (0%)</strong></div>
+        <div class="text-danger">Belum didata <strong id="belumText">0 (0%)</strong></div>
+      </div>
+          </div>
+          <div class="bar-container">
+            <div class="bar-sudah" id="barSudah"></div>
+            <div class="bar-belum"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <a href="https://docs.google.com/spreadsheets/d/141HtjjV18X6y7qXPMWwwt2V9jqARRF7RZ7DYXeNl6TY/edit?usp=sharing" target="_blank" class="btn btn-outline-danger shadow">Lihat Data</a>
+    </div>
+    <script>
+      function exportRekapToExcel() {
+        const table = document.createElement("table");
+        const originalTable = document.getElementById("tabelfilter");
+
+        if (!originalTable) {
+          alert("Tabel tidak ditemukan!");
+          return;
+        }
+
+        // Clone bagian yang ingin diexport
+        const thead = originalTable.querySelector("thead");
+        const tbody = originalTable.querySelector("tbody");
+        const tfoot = originalTable.querySelector("tfoot");
+
+        if (thead) table.appendChild(thead.cloneNode(true));
+        if (tbody) table.appendChild(tbody.cloneNode(true));
+        if (tfoot) table.appendChild(tfoot.cloneNode(true));
+
+        // Ganti jadi HTML valid untuk Excel
+        const html = `
+          <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                xmlns:x="urn:schemas-microsoft-com:office:excel" 
+                xmlns="http://www.w3.org/TR/REC-html40">
+          <head><meta charset="UTF-8"></head>
+          <body><table border="1">${table.innerHTML}</table></body>
+          </html>
+        `;
+
+        const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "rekap_lansia_dewasa.xls";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+  </script>
+
+    </div>
+  </div>
+</div>
+
+      </div>
+    </main>
+
+    <footer class="bg-white text-center text-muted p-3 shadow-sm mt-auto">
+      <small>&copy; 2025 Puskesmas Trenggalek. All rights reserved.</small>
+    </footer>
+
+   <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwALZK-_UNyqv3RvSXalekF8F9C9VJR1hJk65nzMVl0E9if0CcBc3N8J7nLEM7yCHo8/exec";
+   const daftarDesa = ["KARANGSOKO", "SAMBIREJO", "KELUTAN", "SUMBERGEDONG", "TAMANAN", "NGANTRU", "LUAR WILAYAH"];
+
+    function formatDate(dateString) {
+      const parts = dateString.split("/");
+      if (parts.length === 3) {
+        const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
+        return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+      }
+      const d = new Date(dateString);
+      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+    }
+
+    function bulanDariTanggal(dateString) {
+      const date = new Date(dateString);
+      return !isNaN(date) ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "";
+    }
+
+    let allData = [];
+
+    $(document).ready(function () {
+      const $table = $("#rekapTable");
+      const $thead = $table.find("thead tr");
+      const $spinner = $("#loadingSpinner");
+      const $filterBulan = $("#filterBulan");
+      const $filterRekapBulan = $("#bulanFilterRekapTable");
+      
+
+      $spinner.show();
+
+      $.getJSON(scriptURL, function (response) {
+        allData = (response.data || []).filter(row => Object.values(row).some(val => val !== "" && val != null));
+
+        if (allData.length === 0) {
+          $spinner.html("<p class='text-danger'>Data kosong.</p>");
+          return;
+        }
+
+        allData = allData.map(row => {
+          const umurStr = (row["Umur"] || row["UMUR"] || "").toString().replace(/\D/g, "");
+          return {
+            ...row,
+            Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
+            Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
+            Umur: parseInt(umurStr || "0"),
+          };
+        });
+        
+        
+        const usedKeys = ["Nama", "NIK", "Umur", "Gender", "Tanggal", "Desa"];
+        //  Object.keys(allData[0]);
+        
+        $thead.empty();
+        $thead.append(`<th>Aksi</th>`);
+        usedKeys.forEach(key => $thead.append(`<th>${key}</th>`));
+
+        $table.DataTable({
+          data: allData,
+          columns: [
+            {
+              data: null,
+              render: function (data, type, row) {
+                // Simpan data baris ke localStorage saat klik
+                return `<a href="form-pkg.html" target="_blank" class="btn btn-sm btn-primary rounded shadow btn-pkg">+</a>`;
+              }
+            },
+            ...usedKeys.map(key => ({ data: key }))
+          ],
+          destroy: true,
+          pageLength: 10,
+        });
+        $('#rekapTable tbody').on('click', '.btn-pkg', function (e) {
+          const row = $(this).closest('tr');
+          const rowData = $('#rekapTable').DataTable().row(row).data();
+          localStorage.setItem('data_pkg', JSON.stringify(rowData));
+        });
+
+        $spinner.hide();
+
+        const bulanSet = new Set();
+        allData.forEach(d => {
+          if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
+        });
+        Array.from(bulanSet).sort().forEach(b => {
+          $filterBulan.append(`<option value="${b}">${b}</option>`);
+        });
+        Array.from(bulanSet).sort().forEach(b => {
+          $filterRekapBulan.append(`<option value="${b}">${b}</option>`);
+        });
+        hitungRekap();
+
+        $filterBulan.on("change", function () {
+          hitungRekap($(this).val());
+        });
+        $filterRekapBulan.on("change", function () {
+          const selectedBulan = $(this).val();
+          const filteredData = selectedBulan
+            ? allData.filter(d => bulanDariTanggal(d.Tanggal) === selectedBulan)
+            : allData;
+
+          $table.DataTable().clear().rows.add(filteredData).draw();
+        });
+
+      });
+
+      function hitungRekap(filterBulan = "") {
+        const desaUtama = daftarDesa.filter(d => d !== "LUAR WILAYAH");
+        const rekap = {};
+
+        // Inisialisasi rekap
+        daftarDesa.forEach(desa => {
+            rekap[desa] = { lansia: 0, dewasa: 0 };
+        });
+
+        const dataFilter = allData.filter(d => {
+            if (filterBulan && d.Tanggal) {
+            return bulanDariTanggal(d.Tanggal) === filterBulan;
+            }
+            return true;
+        });
+
+        dataFilter.forEach(d => {
+            const umur = d.Umur;
+            const desa = (d.Desa || "").toUpperCase();
+
+            const isUtama = desaUtama.includes(desa);
+            const desaKategori = isUtama ? desa : "LUAR WILAYAH";
+
+            if (!rekap[desaKategori] || isNaN(umur)) return;
+
+            if (umur >= 60) rekap[desaKategori].lansia++;
+            else rekap[desaKategori].dewasa++;
+        });
+
+        let totalL = 0, totalD = 0;
+        const tbody = daftarDesa.map((desa, i) => {
+            const l = rekap[desa].lansia;
+            const d = rekap[desa].dewasa;
+            totalL += l;
+            totalD += d;
+            return `<tr><td>${i + 1}</td><td>${desa}</td><td>${l}</td><td>${d}</td></tr>`;
+        }).join("");
+
+        $("#rekapBody").html(tbody);
+        $("#totalLansia").text(totalL);
+        $("#totalDewasa").text(totalD);
+
+        // Grafik Chart.js
+        const labels = daftarDesa;
+        const lansiaData = daftarDesa.map(d => rekap[d].lansia);
+        const dewasaData = daftarDesa.map(d => rekap[d].dewasa);
+
+        if (window.rekapChart && typeof window.rekapChart.destroy === "function") {
+            window.rekapChart.destroy();
+        }
+
+        const ctx = document.getElementById("rekapChart").getContext("2d");
+
+        window.rekapChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: labels,
+            datasets: [
+                {
+                label: 'Lansia',
+                data: lansiaData,
+                backgroundColor: '#00bcd4'
+                },
+                {
+                label: 'Dewasa',
+                data: dewasaData,
+                backgroundColor: '#e91e63'
+                }
+            ]
+            },
+            options: {
+            responsive: true,
+            scales: {
+                y: {
+                beginAtZero: true,
+                ticks: { precision: 0 }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                display: true,
+                text: 'Grafik Capaian Lansia & Dewasa per Desa'
+                },
+                datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: '#000',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: Math.round
+                }
+            }
+            },
+            plugins: [ChartDataLabels]
+        });
+        }
+    });
+</script>
+
+
+
+  </body>
+</html>
