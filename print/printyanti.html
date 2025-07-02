@@ -203,35 +203,35 @@
 
       data.forEach((d, i) => {
         const row = `<tr>
-        <td>${i + 1}</td>
-        <td>${d.Tanggal || ""}</td>
-        <td>${d.Nama || ""}</td>
-        <td>${d.NIK || ""}</td>
-        <td>${d.JK || ""}</td>
-        <td>${d.Umur || ""}</td>
-        <td>${d.Desa || ""}</td>
-        <td>${d.Tensi || ""}</td>
-        <td>${d.Nadi || ""}</td>
-        <td>${d.Suhu || ""}</td>
-        <td>${d.RR || ""}</td>
-        <td>${d.TB || ""}</td>
-        <td>${d.BB || ""}</td>
-        <td>${d.LP || ""}</td>
-        <td>${d.CVA || ""}</td>
-        <td>${d.GDA || ""}</td>
-        <td>${d.JANTUNG || ""}</td>
-        <td>${d.PROK || ""}</td>
-        <td>${d.CATIN || ""}</td>
-        <td>${d["WA(+/-)"] || ""}</td>
-        <td>${d.CA || ""}</td>
-        <td>${d.Jiwa || ""}</td>
-        <td>${d.Indera || ""}</td>
-        <td>${d.Gigi || ""}</td>
-        <td>${d.TBC || ""}</td>
-        <td>${d.HIV || ""}</td>
-        <td>${d.HEP || ""}</td>
-        <td>${d.ADL || ""}</td>
-      </tr>`;
+          <td>${i + 1}</td>
+          <td>${d.Tanggal || ""}</td>
+          <td>${d.Nama || ""}</td>
+          <td>${d.NIK || ""}</td>
+          <td>${d.JK || ""}</td>
+          <td>${d.Umur || ""}</td>
+          <td>${d.Desa || ""}</td>
+          <td>${d.Tensi || ""}</td>
+          <td>${d.Nadi || ""}</td>
+          <td>${d.Suhu || ""}</td>
+          <td>${d.RR || ""}</td>
+          <td>${d.TB || ""}</td>
+          <td>${d.BB || ""}</td>
+          <td>${d.LP || ""}</td>
+          <td>${d["CVA (CHOL)"] || ""}</td>
+          <td>${d["DM (GDA)"] || ""}</td>
+          <td>${d.JANTUNG || ""}</td>
+          <td>${d.PPOK || ""}</td>
+          <td>${d.CATIN || ""}</td>
+          <td>${d["IVA (Papsm)"] || ""}</td>
+          <td>${d.CA || ""}</td>
+          <td>${d.Jiwa || ""}</td>
+          <td>${d.Indera || ""}</td>
+          <td>${d.Gigi || ""}</td>
+          <td>${d.TBC || ""}</td>
+          <td>${d.HIV || ""}</td>
+          <td>${d.HEP || ""}</td>
+          <td>${d.ADL || ""}</td>
+        </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
       });
 
