@@ -117,12 +117,12 @@
         <tr>
           <td class="info-label">NAMA</td>
           <td class="info-sep">:</td>
-          <td class="info-value">NURKOLIS, A.Md.Kep.</td>
+          <td class="info-value">Ns.TANJUNG PANJI ASMORO, S.Kep</td>
         </tr>
         <tr>
           <td class="info-label">NIP</td>
           <td class="info-sep">:</td>
-          <td class="info-value">19780611 199803 1 005</td>
+          <td class="info-value">19920626 202321 1 001</td>
         </tr>
         <tr>
           <td class="info-label">JABATAN</td>
@@ -148,12 +148,12 @@
             <th>TB</th>
             <th>BB</th>
             <th>LP</th>
-            <th>CVA (CHDU)</th>
+            <th>CVA (CHOL)</th>
             <th>DM(GDA)</th>
             <th>JANTUNG</th>
             <th>PROK</th>
             <th>CATIN</th>
-            <th>WA(+/-)</th>
+            <th>IVA (Papsm)</th>
             <th>CA</th>
             <th>Jiwa</th>
             <th>Indera</th>
@@ -177,7 +177,8 @@
             </td>
             <td class="text-center" style="width: 50%">
               Pelaksana CKG<br /><br /><br /><br />
-              <strong>NURKOLIS, A.Md.Kep.</strong><br />19780611 199803 1 005
+              <strong>Ns. TANJUNG PANJI ASMORO, S.Kep</strong><br />19920626
+              202321 1 001
             </td>
           </tr>
         </table>
@@ -194,7 +195,10 @@
         const [year, month] = rawBulan.split("-");
         const namaBulan = new Date(`${year}-${month}-01`).toLocaleString(
           "id-ID",
-          { month: "long", year: "numeric" }
+          {
+            month: "long",
+            year: "numeric",
+          }
         );
         bulanTeks = namaBulan.toUpperCase();
       }
@@ -202,35 +206,35 @@
 
       data.forEach((d, i) => {
         const row = `<tr>
-        <td>${i + 1}</td>
-        <td>${d.Tanggal || ""}</td>
-        <td>${d.Nama || ""}</td>
-        <td>${d.NIK || ""}</td>
-        <td>${d.JK || ""}</td>
-        <td>${d.Umur || ""}</td>
-        <td>${d.Desa || ""}</td>
-        <td>${d.Tensi || ""}</td>
-        <td>${d.Nadi || ""}</td>
-        <td>${d.Suhu || ""}</td>
-        <td>${d.RR || ""}</td>
-        <td>${d.TB || ""}</td>
-        <td>${d.BB || ""}</td>
-        <td>${d.LP || ""}</td>
-        <td>${d.CVA || ""}</td>
-        <td>${d.GDA || ""}</td>
-        <td>${d.JANTUNG || ""}</td>
-        <td>${d.PROK || ""}</td>
-        <td>${d.CATIN || ""}</td>
-        <td>${d["WA(+/-)"] || ""}</td>
-        <td>${d.CA || ""}</td>
-        <td>${d.Jiwa || ""}</td>
-        <td>${d.Indera || ""}</td>
-        <td>${d.Gigi || ""}</td>
-        <td>${d.TBC || ""}</td>
-        <td>${d.HIV || ""}</td>
-        <td>${d.HEP || ""}</td>
-        <td>${d.ADL || ""}</td>
-      </tr>`;
+          <td>${i + 1}</td>
+          <td>${d.Tanggal || ""}</td>
+          <td>${d.Nama || ""}</td>
+          <td>${d.NIK || ""}</td>
+          <td>${d.JK || ""}</td>
+          <td>${d.Umur || ""}</td>
+          <td>${d.Desa || ""}</td>
+          <td>${d.Tensi || ""}</td>
+          <td>${d.Nadi || ""}</td>
+          <td>${d.Suhu || ""}</td>
+          <td>${d.RR || ""}</td>
+          <td>${d.TB || ""}</td>
+          <td>${d.BB || ""}</td>
+          <td>${d.LP || ""}</td>
+          <td>${d["CVA (CHOL)"] || ""}</td>
+          <td>${d["DM (GDA)"] || ""}</td>
+          <td>${d.JANTUNG || ""}</td>
+          <td>${d.PPOK || ""}</td>
+          <td>${d.CATIN || ""}</td>
+          <td>${d["IVA (Papsm)"] || ""}</td>
+          <td>${d.CA || ""}</td>
+          <td>${d.Jiwa || ""}</td>
+          <td>${d.Indera || ""}</td>
+          <td>${d.Gigi || ""}</td>
+          <td>${d.TBC || ""}</td>
+          <td>${d.HIV || ""}</td>
+          <td>${d.HEP || ""}</td>
+          <td>${d.ADL || ""}</td>
+        </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
       });
 
