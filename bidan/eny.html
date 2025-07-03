@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CKG PKM TGLK</title>
+
+    <!-- CSS Libraries -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="stylebidan.css" />
+
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-800">
+    <!-- Navbar -->
+    <nav
+      class="bg-white shadow-sm sticky-top p-3 d-flex justify-content-between align-items-center"
+    >
+      <div class="d-flex align-items-center">
+        <span class="text-danger fw-bold me-2 fs-4">➕</span>
+        <h5 class="mb-0 text-danger fw-bold">Puskesmas Trenggalek</h5>
+      </div>
+      <a href="../index.html" class="btn btn-outline-danger btn-sm"
+        ><i class="bi bi-arrow-left"></i> Kembali</a
+      >
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container py-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          Data Rekap CKG ENY KARYAWATI, Amd.Keb.
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <div id="loadingSpinner" class="text-center my-3">
+              <div class="spinner-border text-danger" role="status"></div>
+              <p class="mt-2">Memuat data...</p>
+            </div>
+            <div class="mb-3">
+              <label for="bulanFilterRekapTable" class="form-label fw-bold"
+                >Filter Bulan (Rekap Table)</label
+              >
+              <select
+                id="bulanFilterRekapTable"
+                class="form-select form-select-sm w-auto"
+              >
+                <option value="">- Semua Bulan -</option>
+              </select>
+            </div>
+            <table
+              id="rekapTable"
+              class="table table-bordered w-100 text-center"
+            >
+              <thead class="table-light">
+                <tr id="rekapTableHeader"></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow">
+        <div class="card-body">
+          <input
+            type="file"
+            id="excelFileInput"
+            accept=".xlsx, .xls"
+            class="form-control my-3 d-none"
+          />
+          <button id="uploadExcelBtn" class="btn btn-outline-primary mb-3">
+            Import Data Excel
+          </button>
+          <div id="uploadStatus" class="mb-4 text-success fw-bold"></div>
+          <a href="https://docs.google.com/spreadsheets/d/1iFIEg-SotRDzHYlC-apK_j8NBSs0dvTvqQSuwDXejX0/edit?usp=sharing" target="_blank" class="btn btn-outline-secondary mb-3">Lihat data</a>
+          <a href="template_upload.xlsx" class="btn btn-outline-warning mb-3">Download Template Upload data</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white text-center text-muted p-3 shadow-sm mt-auto">
+      <small>&copy; 2025 Puskesmas Trenggalek. All rights reserved.</small>
+    </footer>
+    <!-- Loading Modal (for duplikat checking) -->
+    <div
+      class="modal fade"
+      id="checkingModal"
+      tabindex="-1"
+      aria-labelledby="checkingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Mengecek Duplikat</h5>
+          </div>
+          <div class="modal-body text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-3">Sedang memeriksa data duplikat...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div
+      class="modal fade"
+      id="progressModal"
+      tabindex="-1"
+      aria-labelledby="progressModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="progressModalLabel">Mengupload Data</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="progress">
+              <div
+                id="progressBar"
+                class="progress-bar"
+                role="progressbar"
+                style="width: 0%"
+              >
+                0%
+              </div>
+            </div>
+            <p id="progressText" class="mt-2">Menyiapkan...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Duplikat Modal -->
+    <div
+      class="modal fade"
+      id="duplikatModal"
+      tabindex="-1"
+      aria-labelledby="duplikatModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger">
+              Data Duplikat Ditemukan Silahkan ganti data sesuai baris!!!
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <ul id="duplikatList" class="text-danger"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+      // "https://script.google.com/macros/s/AKfycby6zsq2hvG9G1DCS6iY_2K6LN-nXmc3mftlgcg7ocWPeg-gb7DSiUxvA8DrFex7cjWJvA/exec";
+  
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzZndjXTJEtNKFR7bo548fevn3AygY_k9qJ3FnDSLWMVLGNHvfQztPmXEukAmoT76AKUA/exec";
+
+  function formatDate(dateString) {
+    const parts = dateString.split("/");
+    if (parts.length === 3) {
+      const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
+      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+    }
+    const d = new Date(dateString);
+    return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+  }
+
+  function bulanDariTanggal(dateString) {
+    const date = new Date(dateString);
+    return !isNaN(date) ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "";
+  }
+
+  let allData = [], existingData = [];
+
+  async function fetchExistingData() {
+    const res = await fetch(scriptURL);
+    const json = await res.json();
+    existingData = (json.data || []).map((d) => ({
+      nama: (d.NAMA || d.Nama || "").toUpperCase().trim(),
+      nik: (d.NIK || "").trim(),
+    }));
+  }
+
+  $(document).ready(function () {
+    const $table = $("#rekapTable");
+    const $thead = $table.find("thead tr");
+    const $spinner = $("#loadingSpinner");
+    const $filterBulan = $("#bulanFilterRekapTable");
+
+    $spinner.show();
+
+    $.getJSON(scriptURL, function (response) {
+      allData = (response.data || []).filter((row) =>
+        Object.values(row).some((val) => val !== "" && val != null)
+      );
+
+      if (allData.length === 0) {
+        $spinner.html("<p class='text-danger'>Data kosong.</p>");
+        return;
+      }
+
+      allData = allData.map((row) => ({
+        ...row,
+        Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
+        Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
+      }));
+
+      const usedKeys = Object.keys(allData[0]);
+      $thead.empty();
+      usedKeys.forEach((key) =>
+        $thead.append(`<th class="text-center">${key}</th>`)
+      );
+
+      $table.DataTable({
+        data: allData,
+        columns: usedKeys.map((key) => ({ data: key })),
+        destroy: true,
+        pageLength: 10,
+      });
+
+      $spinner.hide();
+
+      const bulanSet = new Set();
+      allData.forEach((d) => {
+        if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
+      });
+
+      Array.from(bulanSet)
+        .sort()
+        .forEach((b) => {
+          $filterBulan.append(`<option value="${b}">${b}</option>`);
+        });
+
+      $filterBulan.on("change", function () {
+        const selectedBulan = $(this).val();
+        const filteredData = selectedBulan
+          ? allData.filter((d) => bulanDariTanggal(d.Tanggal) === selectedBulan)
+          : allData;
+
+        $table.DataTable().clear().rows.add(filteredData).draw();
+      });
+    });
+
+    // Upload Excel
+    $("#uploadExcelBtn").on("click", () => $("#excelFileInput").click());
+
+    $("#excelFileInput").on("change", async function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const checkingModal = new bootstrap.Modal(document.getElementById("checkingModal"));
+      checkingModal.show();
+      await fetchExistingData();
+
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: "array" });
+        const sheetName = "export";
+
+        if (!workbook.Sheets[sheetName]) {
+          checkingModal.hide();
+          Swal.fire({
+            icon: "error",
+            title: "Sheet 'export' Tidak Ditemukan",
+            text: "Pastikan file Excel memiliki sheet bernama 'export' sesuai template.",
+          });
+          return;
+        }
+
+        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+
+        const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
+        data.forEach((row) => {
+          dateKeys.forEach((key) => {
+            if (row[key]) {
+              const value = row[key];
+              if (typeof value === "number") {
+                const excelDate = new Date((value - 25569) * 86400 * 1000);
+                row[key] = excelDate.toISOString().slice(0, 10);
+              } else {
+                const parsed = new Date(value);
+                if (!isNaN(parsed)) {
+                  row[key] = parsed.toISOString().slice(0, 10);
+                }
+              }
+            }
+          });
+        });
+
+        if (!data.length || !data[0].hasOwnProperty("NAMA") || !data[0].hasOwnProperty("NIK")) {
+          checkingModal.hide();
+          Swal.fire({
+            icon: "warning",
+            title: "Data Tidak Sesuai",
+            text: "Sheet 'export' kosong atau kolom 'NAMA' dan 'NIK' tidak ditemukan.",
+          });
+          return;
+        }
+
+        const duplikat = [];
+        const filtered = data.filter((row, idx) => {
+          const nama = (row["NAMA"] || "").toUpperCase().trim();
+          const nik = (row["NIK"] || "").trim();
+          const found = existingData.find((d) => d.nama === nama && d.nik === nik);
+          if (found) duplikat.push(`Baris ${idx + 2}: ${row["NAMA"]} - ${row["NIK"]}`);
+          return !found;
+        });
+
+        checkingModal.hide();
+
+        if (duplikat.length > 0) {
+          const list = document.getElementById("duplikatList");
+          list.innerHTML = "";
+          duplikat.forEach((item) => {
+            const li = document.createElement("li");
+            li.classList.add("fw-bold", "text-danger");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+
+          const duplikatModal = new bootstrap.Modal(document.getElementById("duplikatModal"));
+          duplikatModal.show();
+
+          document.getElementById("lanjutUploadBtn").onclick = () => {
+            duplikatModal.hide();
+            startUpload(filtered);
+          };
+
+          e.target.value = "";
+          return;
+        }
+
+        startUpload(filtered);
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+
+    function startUpload(filtered) {
+      const modal = new bootstrap.Modal(document.getElementById("progressModal"));
+      modal.show();
+
+      let i = 0, ok = 0, fail = 0;
+      const total = filtered.length;
+
+      const upload = () => {
+        if (i >= total) {
+          document.getElementById("progressText").textContent = "Upload selesai.";
+          setTimeout(() => {
+            modal.hide();
+            Swal.fire({
+              icon: "success",
+              title: "Import Selesai",
+              html: `Berhasil: ${ok}<br/>Gagal: ${fail}`,
+            });
+            setTimeout(() => location.reload(), 1500);
+          }, 1000);
+          return;
+        }
+
+        const row = { ...filtered[i++], action: "add" };
+        const persen = Math.round((i / total) * 100);
+        document.getElementById("progressBar").style.width = persen + "%";
+        document.getElementById("progressBar").textContent = persen + "%";
+        document.getElementById("progressText").textContent = `Mengupload ${i} dari ${total}`;
+
+        fetch(scriptURL, {
+          method: "POST",
+          body: new URLSearchParams(row),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            res.success ? ok++ : fail++;
+            upload();
+          })
+          .catch(() => {
+            fail++;
+            upload();
+          });
+      };
+
+      upload();
+    }
+  });
+</script>
+
+
+  </body>
+</html>
