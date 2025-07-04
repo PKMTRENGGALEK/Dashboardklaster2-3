@@ -81,7 +81,9 @@
           </div>
         </div>
       </div>
-
+      <button id="printReportBtn" class="btn btn-danger mb-3 shadow">
+        <i class="bi bi-printer"></i> Print Laporan
+      </button>
       <div class="card shadow">
         <div class="card-body">
           <input
@@ -94,8 +96,15 @@
             Import Data Excel
           </button>
           <div id="uploadStatus" class="mb-4 text-success fw-bold"></div>
-          <a href="https://docs.google.com/spreadsheets/d/1Ez8EzHydmulcSuv2fli2rdeHmRAE0x1Obyd2CZv-NxA/edit?usp=sharing" target="_blank" class="btn btn-outline-secondary mb-3">Lihat data</a>
-          <a href="template_upload.xlsx" class="btn btn-outline-warning mb-3">Download Template Upload data</a>
+          <a
+            href="https://docs.google.com/spreadsheets/d/1Ez8EzHydmulcSuv2fli2rdeHmRAE0x1Obyd2CZv-NxA/edit?usp=sharing"
+            target="_blank"
+            class="btn btn-outline-secondary mb-3"
+            >Lihat data</a
+          >
+          <a href="template_upload.xlsx" class="btn btn-outline-warning mb-3"
+            >Download Template Upload data</a
+          >
         </div>
       </div>
     </main>
@@ -201,238 +210,299 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
       // "https://script.google.com/macros/s/AKfycby6zsq2hvG9G1DCS6iY_2K6LN-nXmc3mftlgcg7ocWPeg-gb7DSiUxvA8DrFex7cjWJvA/exec";
-  
-  const scriptURL = "https://script.google.com/macros/s/AKfycby6zsq2hvG9G1DCS6iY_2K6LN-nXmc3mftlgcg7ocWPeg-gb7DSiUxvA8DrFex7cjWJvA/exec";
 
-  function formatDate(dateString) {
-    const parts = dateString.split("/");
-    if (parts.length === 3) {
-      const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
-      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-    }
-    const d = new Date(dateString);
-    return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-  }
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycby6zsq2hvG9G1DCS6iY_2K6LN-nXmc3mftlgcg7ocWPeg-gb7DSiUxvA8DrFex7cjWJvA/exec";
 
-  function bulanDariTanggal(dateString) {
-    const date = new Date(dateString);
-    return !isNaN(date) ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "";
-  }
-
-  let allData = [], existingData = [];
-
-  async function fetchExistingData() {
-    const res = await fetch(scriptURL);
-    const json = await res.json();
-    existingData = (json.data || []).map((d) => ({
-      nama: (d.NAMA || d.Nama || "").toUpperCase().trim(),
-      nik: (d.NIK || "").trim(),
-    }));
-  }
-
-  $(document).ready(function () {
-    const $table = $("#rekapTable");
-    const $thead = $table.find("thead tr");
-    const $spinner = $("#loadingSpinner");
-    const $filterBulan = $("#bulanFilterRekapTable");
-
-    $spinner.show();
-
-    $.getJSON(scriptURL, function (response) {
-      allData = (response.data || []).filter((row) =>
-        Object.values(row).some((val) => val !== "" && val != null)
-      );
-
-      if (allData.length === 0) {
-        $spinner.html("<p class='text-danger'>Data kosong.</p>");
-        return;
+      function formatDate(dateString) {
+        const parts = dateString.split("/");
+        if (parts.length === 3) {
+          const d = new Date(
+            `${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(
+              2,
+              "0"
+            )}`
+          );
+          return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+        }
+        const d = new Date(dateString);
+        return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
       }
 
-      allData = allData.map((row) => ({
-        ...row,
-        Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
-        Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
-      }));
+      function bulanDariTanggal(dateString) {
+        const date = new Date(dateString);
+        return !isNaN(date)
+          ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+              2,
+              "0"
+            )}`
+          : "";
+      }
 
-      const usedKeys = Object.keys(allData[0]);
-      $thead.empty();
-      usedKeys.forEach((key) =>
-        $thead.append(`<th class="text-center">${key}</th>`)
-      );
+      let allData = [],
+        existingData = [];
 
-      $table.DataTable({
-        data: allData,
-        columns: usedKeys.map((key) => ({ data: key })),
-        destroy: true,
-        pageLength: 10,
-      });
+      async function fetchExistingData() {
+        const res = await fetch(scriptURL);
+        const json = await res.json();
+        existingData = (json.data || []).map((d) => ({
+          nama: (d.NAMA || d.Nama || "").toUpperCase().trim(),
+          nik: (d.NIK || "").trim(),
+        }));
+      }
 
-      $spinner.hide();
+      $(document).ready(function () {
+        const $table = $("#rekapTable");
+        const $thead = $table.find("thead tr");
+        const $spinner = $("#loadingSpinner");
+        const $filterBulan = $("#bulanFilterRekapTable");
 
-      const bulanSet = new Set();
-      allData.forEach((d) => {
-        if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
-      });
+        $spinner.show();
 
-      Array.from(bulanSet)
-        .sort()
-        .forEach((b) => {
-          $filterBulan.append(`<option value="${b}">${b}</option>`);
+        $.getJSON(scriptURL, function (response) {
+          allData = (response.data || []).filter((row) =>
+            Object.values(row).some((val) => val !== "" && val != null)
+          );
+
+          if (allData.length === 0) {
+            $spinner.html("<p class='text-danger'>Data kosong.</p>");
+            return;
+          }
+
+          allData = allData.map((row) => ({
+            ...row,
+            Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
+            Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
+          }));
+
+          const usedKeys = Object.keys(allData[0]);
+          $thead.empty();
+          usedKeys.forEach((key) =>
+            $thead.append(`<th class="text-center">${key}</th>`)
+          );
+
+          $table.DataTable({
+            data: allData,
+            columns: usedKeys.map((key) => ({ data: key })),
+            destroy: true,
+            pageLength: 10,
+          });
+
+          $spinner.hide();
+
+          const bulanSet = new Set();
+          allData.forEach((d) => {
+            if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
+          });
+
+          Array.from(bulanSet)
+            .sort()
+            .forEach((b) => {
+              $filterBulan.append(`<option value="${b}">${b}</option>`);
+            });
+
+          $filterBulan.on("change", function () {
+            const selectedBulan = $(this).val();
+            const filteredData = selectedBulan
+              ? allData.filter(
+                  (d) => bulanDariTanggal(d.Tanggal) === selectedBulan
+                )
+              : allData;
+
+            $table.DataTable().clear().rows.add(filteredData).draw();
+          });
         });
 
-      $filterBulan.on("change", function () {
-        const selectedBulan = $(this).val();
-        const filteredData = selectedBulan
-          ? allData.filter((d) => bulanDariTanggal(d.Tanggal) === selectedBulan)
-          : allData;
+        // Upload Excel
+        $("#uploadExcelBtn").on("click", () => $("#excelFileInput").click());
 
-        $table.DataTable().clear().rows.add(filteredData).draw();
-      });
-    });
+        $("#excelFileInput").on("change", async function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
 
-    // Upload Excel
-    $("#uploadExcelBtn").on("click", () => $("#excelFileInput").click());
+          const checkingModal = new bootstrap.Modal(
+            document.getElementById("checkingModal")
+          );
+          checkingModal.show();
+          await fetchExistingData();
 
-    $("#excelFileInput").on("change", async function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function (evt) {
+            const workbook = XLSX.read(new Uint8Array(evt.target.result), {
+              type: "array",
+            });
+            const sheetName = "export";
 
-      const checkingModal = new bootstrap.Modal(document.getElementById("checkingModal"));
-      checkingModal.show();
-      await fetchExistingData();
-
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: "array" });
-        const sheetName = "export";
-
-        if (!workbook.Sheets[sheetName]) {
-          checkingModal.hide();
-          Swal.fire({
-            icon: "error",
-            title: "Sheet 'export' Tidak Ditemukan",
-            text: "Pastikan file Excel memiliki sheet bernama 'export' sesuai template.",
-          });
-          return;
-        }
-
-        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
-
-        const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
-        data.forEach((row) => {
-          dateKeys.forEach((key) => {
-            if (row[key]) {
-              const value = row[key];
-              if (typeof value === "number") {
-                const excelDate = new Date((value - 25569) * 86400 * 1000);
-                row[key] = excelDate.toISOString().slice(0, 10);
-              } else {
-                const parsed = new Date(value);
-                if (!isNaN(parsed)) {
-                  row[key] = parsed.toISOString().slice(0, 10);
-                }
-              }
+            if (!workbook.Sheets[sheetName]) {
+              checkingModal.hide();
+              Swal.fire({
+                icon: "error",
+                title: "Sheet 'export' Tidak Ditemukan",
+                text: "Pastikan file Excel memiliki sheet bernama 'export' sesuai template.",
+              });
+              return;
             }
-          });
-        });
 
-        if (!data.length || !data[0].hasOwnProperty("NAMA") || !data[0].hasOwnProperty("NIK")) {
-          checkingModal.hide();
-          Swal.fire({
-            icon: "warning",
-            title: "Data Tidak Sesuai",
-            text: "Sheet 'export' kosong atau kolom 'NAMA' dan 'NIK' tidak ditemukan.",
-          });
-          return;
-        }
+            const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+              defval: "",
+            });
 
-        const duplikat = [];
-        const filtered = data.filter((row, idx) => {
-          const nama = (row["NAMA"] || "").toUpperCase().trim();
-          const nik = (row["NIK"] || "").trim();
-          const found = existingData.find((d) => d.nama === nama && d.nik === nik);
-          if (found) duplikat.push(`Baris ${idx + 2}: ${row["NAMA"]} - ${row["NIK"]}`);
-          return !found;
-        });
+            const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
+            data.forEach((row) => {
+              dateKeys.forEach((key) => {
+                if (row[key]) {
+                  const value = row[key];
+                  if (typeof value === "number") {
+                    const excelDate = new Date((value - 25569) * 86400 * 1000);
+                    row[key] = excelDate.toISOString().slice(0, 10);
+                  } else {
+                    const parsed = new Date(value);
+                    if (!isNaN(parsed)) {
+                      row[key] = parsed.toISOString().slice(0, 10);
+                    }
+                  }
+                }
+              });
+            });
 
-        checkingModal.hide();
+            if (
+              !data.length ||
+              !data[0].hasOwnProperty("NAMA") ||
+              !data[0].hasOwnProperty("NIK")
+            ) {
+              checkingModal.hide();
+              Swal.fire({
+                icon: "warning",
+                title: "Data Tidak Sesuai",
+                text: "Sheet 'export' kosong atau kolom 'NAMA' dan 'NIK' tidak ditemukan.",
+              });
+              return;
+            }
 
-        if (duplikat.length > 0) {
-          const list = document.getElementById("duplikatList");
-          list.innerHTML = "";
-          duplikat.forEach((item) => {
-            const li = document.createElement("li");
-            li.classList.add("fw-bold", "text-danger");
-            li.textContent = item;
-            list.appendChild(li);
-          });
+            const duplikat = [];
+            const filtered = data.filter((row, idx) => {
+              const nama = (row["NAMA"] || "").toUpperCase().trim();
+              const nik = (row["NIK"] || "").trim();
+              const found = existingData.find(
+                (d) => d.nama === nama && d.nik === nik
+              );
+              if (found)
+                duplikat.push(
+                  `Baris ${idx + 2}: ${row["NAMA"]} - ${row["NIK"]}`
+                );
+              return !found;
+            });
 
-          const duplikatModal = new bootstrap.Modal(document.getElementById("duplikatModal"));
-          duplikatModal.show();
+            checkingModal.hide();
 
-          document.getElementById("lanjutUploadBtn").onclick = () => {
-            duplikatModal.hide();
+            if (duplikat.length > 0) {
+              const list = document.getElementById("duplikatList");
+              list.innerHTML = "";
+              duplikat.forEach((item) => {
+                const li = document.createElement("li");
+                li.classList.add("fw-bold", "text-danger");
+                li.textContent = item;
+                list.appendChild(li);
+              });
+
+              const duplikatModal = new bootstrap.Modal(
+                document.getElementById("duplikatModal")
+              );
+              duplikatModal.show();
+
+              document.getElementById("lanjutUploadBtn").onclick = () => {
+                duplikatModal.hide();
+                startUpload(filtered);
+              };
+
+              e.target.value = "";
+              return;
+            }
+
             startUpload(filtered);
           };
 
-          e.target.value = "";
-          return;
+          reader.readAsArrayBuffer(file);
+        });
+
+        function startUpload(filtered) {
+          const modal = new bootstrap.Modal(
+            document.getElementById("progressModal")
+          );
+          modal.show();
+
+          let i = 0,
+            ok = 0,
+            fail = 0;
+          const total = filtered.length;
+
+          const upload = () => {
+            if (i >= total) {
+              document.getElementById("progressText").textContent =
+                "Upload selesai.";
+              setTimeout(() => {
+                modal.hide();
+                Swal.fire({
+                  icon: "success",
+                  title: "Import Selesai",
+                  html: `Berhasil: ${ok}<br/>Gagal: ${fail}`,
+                });
+                setTimeout(() => location.reload(), 1500);
+              }, 1000);
+              return;
+            }
+
+            const row = { ...filtered[i++], action: "add" };
+            const persen = Math.round((i / total) * 100);
+            document.getElementById("progressBar").style.width = persen + "%";
+            document.getElementById("progressBar").textContent = persen + "%";
+            document.getElementById(
+              "progressText"
+            ).textContent = `Mengupload ${i} dari ${total}`;
+
+            fetch(scriptURL, {
+              method: "POST",
+              body: new URLSearchParams(row),
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                res.success ? ok++ : fail++;
+                upload();
+              })
+              .catch(() => {
+                fail++;
+                upload();
+              });
+          };
+
+          upload();
         }
+      });
+      $("#printReportBtn").on("click", function () {
+        const table = $("#rekapTable").DataTable();
+        const filteredData = table.rows({ search: "applied" }).data().toArray();
 
-        startUpload(filtered);
-      };
+        // Ambil nama kolom dari <thead>
+        const headers = [];
+        $("#rekapTable thead th").each(function () {
+          headers.push($(this).text().trim());
+        });
 
-      reader.readAsArrayBuffer(file);
-    });
-
-    function startUpload(filtered) {
-      const modal = new bootstrap.Modal(document.getElementById("progressModal"));
-      modal.show();
-
-      let i = 0, ok = 0, fail = 0;
-      const total = filtered.length;
-
-      const upload = () => {
-        if (i >= total) {
-          document.getElementById("progressText").textContent = "Upload selesai.";
-          setTimeout(() => {
-            modal.hide();
-            Swal.fire({
-              icon: "success",
-              title: "Import Selesai",
-              html: `Berhasil: ${ok}<br/>Gagal: ${fail}`,
-            });
-            setTimeout(() => location.reload(), 1500);
-          }, 1000);
-          return;
-        }
-
-        const row = { ...filtered[i++], action: "add" };
-        const persen = Math.round((i / total) * 100);
-        document.getElementById("progressBar").style.width = persen + "%";
-        document.getElementById("progressBar").textContent = persen + "%";
-        document.getElementById("progressText").textContent = `Mengupload ${i} dari ${total}`;
-
-        fetch(scriptURL, {
-          method: "POST",
-          body: new URLSearchParams(row),
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            res.success ? ok++ : fail++;
-            upload();
-          })
-          .catch(() => {
-            fail++;
-            upload();
+        // Konversi array of array menjadi array of object
+        const convertedData = filteredData.map((row) => {
+          const obj = {};
+          headers.forEach((key, index) => {
+            obj[key] = row[index] || "";
           });
-      };
+          return obj;
+        });
 
-      upload();
-    }
-  });
-</script>
+        // Simpan data
+        localStorage.setItem("printData", JSON.stringify(convertedData));
+        localStorage.setItem("printHeaders", JSON.stringify(headers));
 
-
+        window.open("printyuyun.html", "_blank");
+      });
+    </script>
   </body>
 </html>
