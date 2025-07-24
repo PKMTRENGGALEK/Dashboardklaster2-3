@@ -304,84 +304,95 @@
 
       const reader = new FileReader();
       reader.onload = function (evt) {
-        const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: "array" });
-        const sheetName = "export";
+  const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: "array" });
+  const sheetName = "export";
 
-        if (!workbook.Sheets[sheetName]) {
-          checkingModal.hide();
-          Swal.fire({
-            icon: "error",
-            title: "Sheet 'export' Tidak Ditemukan",
-            text: "Pastikan file Excel memiliki sheet bernama 'export' sesuai template.",
-          });
-          return;
+  if (!workbook.Sheets[sheetName]) {
+    checkingModal.hide();
+    Swal.fire({
+      icon: "error",
+      title: "Sheet 'export' Tidak Ditemukan",
+      text: "Pastikan file Excel memiliki sheet bernama 'export' sesuai template.",
+    });
+    return;
+  }
+
+  // Ambil data dari sheet
+  let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+
+  // ⛔ Filter baris yang seluruh kolomnya kosong (termasuk hasil rumus kosong)
+  data = data.filter(row =>
+    Object.values(row).some(val => val !== "" && val !== null && val !== undefined)
+  );
+
+  // 🔒 Format kolom tanggal (Excel date number atau string)
+  const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
+  data.forEach((row) => {
+    dateKeys.forEach((key) => {
+      if (row[key]) {
+        const value = row[key];
+        if (typeof value === "number") {
+          const excelDate = new Date((value - 25569) * 86400 * 1000);
+          row[key] = excelDate.toISOString().slice(0, 10);
+        } else {
+          const parsed = new Date(value);
+          if (!isNaN(parsed)) {
+            row[key] = parsed.toISOString().slice(0, 10);
+          }
         }
+      }
+    });
+  });
 
-        const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+  // 🧪 Validasi kolom wajib
+  if (!data.length || !data[0].hasOwnProperty("NAMA") || !data[0].hasOwnProperty("NIK")) {
+    checkingModal.hide();
+    Swal.fire({
+      icon: "warning",
+      title: "Data Tidak Sesuai",
+      text: "Sheet 'export' kosong atau kolom 'NAMA' dan 'NIK' tidak ditemukan.",
+    });
+    return;
+  }
 
-        const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
-        data.forEach((row) => {
-          dateKeys.forEach((key) => {
-            if (row[key]) {
-              const value = row[key];
-              if (typeof value === "number") {
-                const excelDate = new Date((value - 25569) * 86400 * 1000);
-                row[key] = excelDate.toISOString().slice(0, 10);
-              } else {
-                const parsed = new Date(value);
-                if (!isNaN(parsed)) {
-                  row[key] = parsed.toISOString().slice(0, 10);
-                }
-              }
-            }
-          });
-        });
+  // 🧐 Cek duplikat
+  const duplikat = [];
+  const filtered = data.filter((row, idx) => {
+    const nama = (row["NAMA"] || "").toUpperCase().trim();
+    const nik = (row["NIK"] || "").trim();
+    const found = existingData.find((d) => d.nama === nama && d.nik === nik);
+    if (found) duplikat.push(`Baris ${idx + 2}: ${row["NAMA"]} - ${row["NIK"]}`);
+    return !found;
+  });
 
-        if (!data.length || !data[0].hasOwnProperty("NAMA") || !data[0].hasOwnProperty("NIK")) {
-          checkingModal.hide();
-          Swal.fire({
-            icon: "warning",
-            title: "Data Tidak Sesuai",
-            text: "Sheet 'export' kosong atau kolom 'NAMA' dan 'NIK' tidak ditemukan.",
-          });
-          return;
-        }
+  checkingModal.hide();
 
-        const duplikat = [];
-        const filtered = data.filter((row, idx) => {
-          const nama = (row["NAMA"] || "").toUpperCase().trim();
-          const nik = (row["NIK"] || "").trim();
-          const found = existingData.find((d) => d.nama === nama && d.nik === nik);
-          if (found) duplikat.push(`Baris ${idx + 2}: ${row["NAMA"]} - ${row["NIK"]}`);
-          return !found;
-        });
+  if (duplikat.length > 0) {
+    const list = document.getElementById("duplikatList");
+    list.innerHTML = "";
+    duplikat.forEach((item) => {
+      const li = document.createElement("li");
+      li.classList.add("fw-bold", "text-danger");
+      li.textContent = item;
+      list.appendChild(li);
+    });
 
-        checkingModal.hide();
+    const duplikatModal = new bootstrap.Modal(document.getElementById("duplikatModal"));
+    duplikatModal.show();
 
-        if (duplikat.length > 0) {
-          const list = document.getElementById("duplikatList");
-          list.innerHTML = "";
-          duplikat.forEach((item) => {
-            const li = document.createElement("li");
-            li.classList.add("fw-bold", "text-danger");
-            li.textContent = item;
-            list.appendChild(li);
-          });
+    // Tombol lanjutan manual
+    document.getElementById("lanjutUploadBtn").onclick = () => {
+      duplikatModal.hide();
+      startUpload(filtered);
+    };
 
-          const duplikatModal = new bootstrap.Modal(document.getElementById("duplikatModal"));
-          duplikatModal.show();
+    e.target.value = "";
+    return;
+  }
 
-          document.getElementById("lanjutUploadBtn").onclick = () => {
-            duplikatModal.hide();
-            startUpload(filtered);
-          };
-
-          e.target.value = "";
-          return;
-        }
-
-        startUpload(filtered);
-      };
+  // 🚀 Upload langsung jika tidak ada duplikat
+  startUpload(filtered);
+};
 
       reader.readAsArrayBuffer(file);
     });
