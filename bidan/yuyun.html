@@ -280,6 +280,25 @@
           usedKeys.forEach((key) =>
             $thead.append(`<th class="text-center">${key}</th>`)
           );
+          // Hitung jumlah data per bulan
+          const bulanCount = Array(12).fill(0); // index 0 = Januari, dst.
+
+          allData.forEach((row) => {
+            if (row.Tanggal) {
+              const d = new Date(row.Tanggal);
+              if (!isNaN(d)) {
+                const month = d.getMonth(); // 0-11
+                bulanCount[month]++;
+              }
+            }
+          });
+
+          // Tampilkan ke dalam tabel rekap per bulan
+          const $rekapRow = $("#rekapPerBulanRow");
+          $rekapRow.empty().append("<td>Astutik</td>");
+          bulanCount.forEach((count) => {
+            $rekapRow.append(`<td>${count}</td>`);
+          });
 
           $table.DataTable({
             data: allData,
@@ -343,10 +362,19 @@
               return;
             }
 
-            const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+            // Ambil data dari sheet
+            let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
               defval: "",
             });
 
+            // ⛔ Filter baris yang seluruh kolomnya kosong (termasuk hasil rumus kosong)
+            data = data.filter((row) =>
+              Object.values(row).some(
+                (val) => val !== "" && val !== null && val !== undefined
+              )
+            );
+
+            // 🔒 Format kolom tanggal (Excel date number atau string)
             const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
             data.forEach((row) => {
               dateKeys.forEach((key) => {
@@ -365,6 +393,7 @@
               });
             });
 
+            // 🧪 Validasi kolom wajib
             if (
               !data.length ||
               !data[0].hasOwnProperty("NAMA") ||
@@ -379,6 +408,7 @@
               return;
             }
 
+            // 🧐 Cek duplikat
             const duplikat = [];
             const filtered = data.filter((row, idx) => {
               const nama = (row["NAMA"] || "").toUpperCase().trim();
@@ -410,15 +440,22 @@
               );
               duplikatModal.show();
 
-              document.getElementById("lanjutUploadBtn").onclick = () => {
-                duplikatModal.hide();
-                startUpload(filtered);
-              };
+              // Tombol lanjutan manual
+              setTimeout(() => {
+                const lanjutBtn = document.getElementById("lanjutUploadBtn");
+                if (lanjutBtn) {
+                  lanjutBtn.onclick = () => {
+                    duplikatModal.hide();
+                    startUpload(filtered);
+                  };
+                }
+              }, 100);
 
               e.target.value = "";
               return;
             }
 
+            // 🚀 Upload langsung jika tidak ada duplikat
             startUpload(filtered);
           };
 
@@ -448,6 +485,7 @@
                   html: `Berhasil: ${ok}<br/>Gagal: ${fail}`,
                 });
                 setTimeout(() => location.reload(), 1500);
+                document.getElementById("excelFileInput").value = "";
               }, 1000);
               return;
             }
@@ -477,31 +515,6 @@
 
           upload();
         }
-      });
-      $("#printReportBtn").on("click", function () {
-        const table = $("#rekapTable").DataTable();
-        const filteredData = table.rows({ search: "applied" }).data().toArray();
-
-        // Ambil nama kolom dari <thead>
-        const headers = [];
-        $("#rekapTable thead th").each(function () {
-          headers.push($(this).text().trim());
-        });
-
-        // Konversi array of array menjadi array of object
-        const convertedData = filteredData.map((row) => {
-          const obj = {};
-          headers.forEach((key, index) => {
-            obj[key] = row[index] || "";
-          });
-          return obj;
-        });
-
-        // Simpan data
-        localStorage.setItem("printData", JSON.stringify(convertedData));
-        localStorage.setItem("printHeaders", JSON.stringify(headers));
-
-        window.open("printyuyun.html", "_blank");
       });
     </script>
   </body>
