@@ -31,6 +31,36 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <style>
+      /* Supaya tabel tidak terlalu lebar di layar kecil */
+  .table-responsive {
+    overflow-x: auto;
+  }
+  /* Perapihan header tabel agar wrap dan sejajar tengah */
+#rekapTable th {
+  white-space: normal !important;
+  word-wrap: break-word;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 13px;
+  padding: 8px;
+}
+
+/* Tambahkan lebar minimum/khusus untuk kolom tertentu jika perlu */
+#rekapTable th:nth-child(1),
+#rekapTable th:nth-child(2),
+#rekapTable th:nth-child(3),
+#rekapTable th:nth-child(4),
+#rekapTable th:nth-child(5) {
+  min-width: 120px;
+}
+
+#rekapTable th:nth-child(n+6) {
+  min-width: 100px;
+}
+
+  
+    </style>
   </head>
   <body class="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-800">
     <!-- Navbar -->
