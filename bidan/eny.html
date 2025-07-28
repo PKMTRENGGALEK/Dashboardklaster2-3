@@ -107,6 +107,41 @@
             </table>
           </div>
         </div>
+        <div class="container">
+          <div class="table-responsive mb-4">
+            <table
+              class="table table-bordered text-center align-middle"
+              id="rekapPerBulanTable"
+            >
+              <thead class="table-light">
+                <tr>
+                  <th rowspan="2">Rekap</th>
+                  <th colspan="12">Bulan</th>
+                </tr>
+                <tr>
+                  <th>Januari</th>
+                  <th>Februari</th>
+                  <th>Maret</th>
+                  <th>April</th>
+                  <th>Mei</th>
+                  <th>Juni</th>
+                  <th>Juli</th>
+                  <th>Agustus</th>
+                  <th>September</th>
+                  <th>Oktober</th>
+                  <th>November</th>
+                  <th>Desember</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="rekapPerBulanRow">
+                  <td>Eny KARYAWATI</td>
+                  <td colspan="12">Memuat...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div class="card shadow">
@@ -305,12 +340,31 @@
           usedKeys.forEach((key) =>
             $thead.append(`<th class="text-center">${key}</th>`)
           );
+          // Hitung jumlah data per bulan
+          const bulanCount = Array(12).fill(0); // index 0 = Januari, dst.
+
+          allData.forEach((row) => {
+            if (row.Tanggal) {
+              const d = new Date(row.Tanggal);
+              if (!isNaN(d)) {
+                const month = d.getMonth(); // 0-11
+                bulanCount[month]++;
+              }
+            }
+          });
+
+          // Tampilkan ke dalam tabel rekap per bulan
+          const $rekapRow = $("#rekapPerBulanRow");
+          $rekapRow.empty().append("<td>Eny Karyawati</td>");
+          bulanCount.forEach((count) => {
+            $rekapRow.append(`<td>${count}</td>`);
+          });
 
           $table.DataTable({
             data: allData,
             columns: usedKeys.map((key) => ({ data: key })),
             destroy: true,
-            pageLength: 10,
+            // pageLength: 10,
           });
 
           $spinner.hide();
@@ -368,10 +422,19 @@
               return;
             }
 
-            const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+            // Ambil data dari sheet
+            let data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
               defval: "",
             });
 
+            // ⛔ Filter baris yang seluruh kolomnya kosong (termasuk hasil rumus kosong)
+            data = data.filter((row) =>
+              Object.values(row).some(
+                (val) => val !== "" && val !== null && val !== undefined
+              )
+            );
+
+            // 🔒 Format kolom tanggal (Excel date number atau string)
             const dateKeys = ["TANGGAL", "TANGGAL LAHIR"];
             data.forEach((row) => {
               dateKeys.forEach((key) => {
@@ -390,6 +453,7 @@
               });
             });
 
+            // 🧪 Validasi kolom wajib
             if (
               !data.length ||
               !data[0].hasOwnProperty("NAMA") ||
@@ -404,6 +468,7 @@
               return;
             }
 
+            // 🧐 Cek duplikat
             const duplikat = [];
             const filtered = data.filter((row, idx) => {
               const nama = (row["NAMA"] || "").toUpperCase().trim();
@@ -435,15 +500,22 @@
               );
               duplikatModal.show();
 
-              document.getElementById("lanjutUploadBtn").onclick = () => {
-                duplikatModal.hide();
-                startUpload(filtered);
-              };
+              // Tombol lanjutan manual
+              setTimeout(() => {
+                const lanjutBtn = document.getElementById("lanjutUploadBtn");
+                if (lanjutBtn) {
+                  lanjutBtn.onclick = () => {
+                    duplikatModal.hide();
+                    startUpload(filtered);
+                  };
+                }
+              }, 100);
 
               e.target.value = "";
               return;
             }
 
+            // 🚀 Upload langsung jika tidak ada duplikat
             startUpload(filtered);
           };
 
@@ -473,6 +545,7 @@
                   html: `Berhasil: ${ok}<br/>Gagal: ${fail}`,
                 });
                 setTimeout(() => location.reload(), 1500);
+                document.getElementById("excelFileInput").value = "";
               }, 1000);
               return;
             }
