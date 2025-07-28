@@ -410,7 +410,8 @@
             const row = document.createElement("tr");
             row.innerHTML =
               `<td class="text-start">${res.nama}</td>` +
-              res.count.map((n) => `<td>${n}</td>`).join("");
+              res.count.map((n) => `<td>${n > 0 ? n : ""}</td>`).join("");
+
             const loadingRow = document.getElementById(
               `loading-${res.nama.replace(/\s+/g, "-")}`
             );
