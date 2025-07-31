@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Gabungan Semua Ruangan</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- DataTables -->
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+  <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet"/>
+    
+  <style>
+     body {
+    padding-bottom: 100px; /* buat ruang ekstra untuk footer/pagination */
+  }
+
+  table.dataTable {
+    margin-bottom: 0 !important; /* hilangkan jarak default tabel */
+  }
+    table, td, th {
+      font-size: 0.8rem !important;
+    }
+    thead {
+      background-color: #fff !important;
+      color: #000 !important;
+    }
+    #loadingRow td {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+    font-size: 0.75rem;
+    }
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info {
+    font-size: 0.75rem;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <a href="bidanreport.html" class="btn btn-outline-primary mb-3">⬅️ Kembali</a>
+    <h5 class="text-center mb-4">Data Gabungan Semua Ruangan</h5>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="filterBulan" class="form-label">Filter Bulan Laporan:</label>
+            <select id="filterBulan" class="form-select form-select-sm">
+            <option value="">Semua Bulan</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="filterUsia" class="form-label">Filter Kelompok Usia:</label>
+            <select id="filterUsia" class="form-select form-select-sm">
+                <option value="">Semua</option>
+                <option value="0_1">0 - 1 tahun</option>
+                <option value="1_3">1 - 3 tahun</option>
+                <option value="3_5">3 - 5 tahun</option>
+                <option value="5_7">5 - 7 tahun</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+      <table id="dataTable" class="table table-sm table-striped table-bordered small">
+        <thead class="text-center align-middle">
+          <tr>
+            <th>No</th>
+            <th>Ruangan</th>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>Umur</th>
+            <th>NIK</th>
+            <th>Tanggal Lahir</th>
+            <th>Alamat</th>
+            <th>Tinggi</th>
+            <th>Berat</th>
+            <th>Lingkar Kepala</th>
+            <th>Perawat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="loadingRow">
+            <td colspan="12">
+              <div class="d-flex justify-content-center align-items-center gap-2 py-2">
+                <div class="spinner-border text-primary" role="status" style="width: 1.5rem; height: 1.5rem;"></div>
+                <span>Memuat data, mohon tunggu...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 d-none">
+  <h6>Rekap Kelompok Usia (dari data yang ditampilkan):</h6>
+  <ul class="small" style="font-size: 0.75rem;">
+    <li>0 - 1 tahun: <strong><span id="kelompok_0_1">0</span></strong> anak</li>
+    <li>1 - 3 tahun: <strong><span id="kelompok_1_3">0</span></strong> anak</li>
+    <li>3 - 5 tahun: <strong><span id="kelompok_3_5">0</span></strong> anak</li>
+    <li>5 - 7 tahun: <strong><span id="kelompok_5_7">0</span></strong> anak</li>
+  </ul>
+</div>
+
+  </div>
+
+  <!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+ <!-- Sisanya sama seperti sebelumnya sampai bagian script -->
+<script>
+const dataSources = [
+  { nama: "(Ruang Ibu) Astutik", url: "https://script.google.com/macros/s/AKfycbyQdKG8jBEzdktE6wOkUCKlrKOwFW4y2kV6Y0ArEYK2DaxubZLLxIWfZQScuWOdDWCFeg/exec" },
+  { nama: "(Ruang Anak & Remaja) Dewi Novitasari", url: "https://script.google.com/macros/s/AKfycbyG4WFdT9obD19GRy-2WCqNBHw6EpMwgg1ZcA7TRXhht7MaE1Vh-oU0cNN0HH3ycU3_Ag/exec" },
+  { nama: "(Kelurahan Sumbergedong) Eny Karyawati", url: "https://script.google.com/macros/s/AKfycbzZndjXTJEtNKFR7bo548fevn3AygY_k9qJ3FnDSLWMVLGNHvfQztPmXEukAmoT76AKUA/exec" },
+  { nama: "(Kelurahan Tamanan) Fitria Rahmawati", url: "https://script.google.com/macros/s/AKfycbxxYTTuHglcXtgipsbjUosYFK0RbzWQJ8lTMPcTWsjYQeiejWuJlAGGP7QziJ-7mmu9rg/exec" },
+  { nama: "(Desa Sambirejo) Ninik Wardiati", url: "https://script.google.com/macros/s/AKfycbwnj5wVypjcFFHtm0byEn3l49f2DemTpm6xzpJjeFsD2pvw0x5u4AygIpKtcB3vELoYQw/exec" },
+  { nama: "(Kelurahan Kelutan) Paryati", url: "https://script.google.com/macros/s/AKfycbyPbGW_4JSS695M5Qd8qi55tuHkj3fR_W11HY5yN-orKjBi5xDqMc3JZSuC5BZqXmOmGA/exec" },
+  { nama: "(Desa Karangsoko) Yuyun Wahyu Retnowati", url: "https://script.google.com/macros/s/AKfycby6zsq2hvG9G1DCS6iY_2K6LN-nXmc3mftlgcg7ocWPeg-gb7DSiUxvA8DrFex7cjWJvA/exec" },
+  { nama: "(Kelurahan Ngantru) Wahyu Puji L", url: "https://script.google.com/macros/s/AKfycbxNqHI4oql4voEXdLSR4IGucv3A0c6b4i88aHfj7pleolH-uYdt9j8VqFSujos9NpKblA/exec" },
+];
+
+let allData = [];
+let dataTable;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  $('#loadingRow').show();
+
+  const fetchPromises = dataSources.map(async (source) => {
+    try {
+      const res = await fetch(source.url);
+      const json = await res.json();
+      const rows = json.data || json;
+
+      return rows.map(row => {
+        const tanggal = row["TANGGAL"] || "";
+        const bulanStr = ambilBulanDariTanggal(tanggal);
+
+        return {
+          ruangan: row["Ruangan"] || source.nama.split(")")[0].replace("(", "").trim(),
+          tanggal,
+          bulan: bulanStr,
+          nama: row["NAMA"] || "",
+          umur: row["UMUR"] || "",
+          nik: row["NIK"] || "",
+          tanggal_lahir: row["TANGGAL LAHIR"] || "",
+          alamat: row["ALAMAT"] || "",
+          tinggi: row["Tinggi"] || "",
+          berat: row["Berat"] || "",
+          lingkar: row["Lingkar Kepala"] || "",
+          perawat: source.nama.split(")")[1]?.trim() || "",
+        };
+      });
+    } catch (err) {
+      console.error("Gagal fetch dari:", source.nama, err);
+      return [];
+    }
+  });
+
+  const results = await Promise.all(fetchPromises);
+  results.forEach(group => allData.push(...group));
+
+  $('#loadingRow').remove();
+  renderTable(allData);
+  populateBulanOptions(allData);
+
+  $('#filterUsia').on('change', applyFilters);
+  $('#filterBulan').on('change', applyFilters);
+});
+
+function ambilBulanDariTanggal(tanggal) {
+  if (!tanggal) return '';
+  if (tanggal.includes("-")) {
+    const parts = tanggal.split("-");
+    if (parts.length >= 2) return `${parts[0]}-${parts[1].padStart(2, '0')}`;
+  } else if (tanggal.includes("/")) {
+    const parts = tanggal.split("/");
+    if (parts.length >= 2) return `${parts[2]}-${parts[1].padStart(2, '0')}`;
+  }
+  return '';
+}
+
+function formatBulan(bulanStr) {
+  if (!bulanStr || bulanStr.length !== 7) return '';
+  const [tahun, bulan] = bulanStr.split('-');
+  const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const nama = namaBulan[parseInt(bulan, 10) - 1];
+  return nama ? `${nama} ${tahun}` : '';
+}
+
+function populateBulanOptions(data) {
+  const bulanSet = new Set();
+
+  data.forEach(row => {
+    const bulan = row.bulan;
+    // Hanya masukkan bulan valid: panjang 7 karakter dan format YYYY-MM
+    if (bulan && /^\d{4}-\d{2}$/.test(bulan)) {
+      bulanSet.add(bulan);
+    }
+  });
+
+  const bulanArray = Array.from(bulanSet).sort().reverse();
+
+  const filter = document.getElementById('filterBulan');
+  filter.innerHTML = '<option value="">Semua Bulan</option>';
+
+  bulanArray.forEach(bulan => {
+    const option = document.createElement('option');
+    option.value = bulan;
+    option.textContent = formatBulan(bulan); // Contoh: November 2025
+    filter.appendChild(option);
+  });
+}
+
+
+function renderTable(data) {
+  if (dataTable) {
+    dataTable.clear().rows.add(data).draw();
+  } else {
+    dataTable = $('#dataTable').DataTable({
+      data,
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          className: 'btn btn-success btn-sm me-2 shadow',
+          text: '<i class="fas fa-file-excel me-1"></i> Excel'
+        },
+        {
+          extend: 'pdfHtml5',
+          className: 'btn btn-danger btn-sm me-2 shadow',
+          text: '<i class="fas fa-file-pdf me-1"></i> PDF',
+          orientation: 'landscape',
+          pageSize: 'A4'
+        },
+        {
+          extend: 'print',
+          className: 'btn btn-secondary btn-sm shadow',
+          text: '<i class="fas fa-print me-1"></i> Print'
+        }
+      ],
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          },
+          className: "text-center",
+          orderable: false
+        },
+        { data: 'ruangan' },
+        { data: 'tanggal' },
+        { data: 'nama' },
+        { data: 'umur' },
+        { data: 'nik' },
+        { data: 'tanggal_lahir' },
+        { data: 'alamat' },
+        { data: 'tinggi' },
+        { data: 'berat' },
+        { data: 'lingkar' },
+        { data: 'perawat' },
+      ],
+      pageLength: 10,
+      lengthMenu: [10, 15, 25, 50, 100],
+      responsive: true,
+      scrollX: true,
+      autoWidth: false,
+      deferRender: true
+    });
+  }
+
+  updateKelompokUsia(data);
+}
+
+function hitungUsia(tanggalLahirStr, tanggalLaporanStr) {
+  const tglLahir = new Date(tanggalLahirStr);
+  const tglLaporan = new Date(tanggalLaporanStr);
+  if (isNaN(tglLahir) || isNaN(tglLaporan)) return null;
+  return (tglLaporan - tglLahir) / (1000 * 60 * 60 * 24 * 365.25);
+}
+
+function updateKelompokUsia(data) {
+  let usia_0_1 = 0, usia_1_3 = 0, usia_3_5 = 0, usia_5_7 = 0;
+  data.forEach(row => {
+    const usia = hitungUsia(row.tanggal_lahir, row.tanggal);
+    if (usia === null) return;
+    if (usia < 1) usia_0_1++;
+    else if (usia < 3) usia_1_3++;
+    else if (usia < 5) usia_3_5++;
+    else if (usia < 7) usia_5_7++;
+  });
+
+  document.getElementById('kelompok_0_1').textContent = usia_0_1;
+  document.getElementById('kelompok_1_3').textContent = usia_1_3;
+  document.getElementById('kelompok_3_5').textContent = usia_3_5;
+  document.getElementById('kelompok_5_7').textContent = usia_5_7;
+}
+
+function applyFilters() {
+  const selectedUsia = $('#filterUsia').val();
+  const selectedBulan = $('#filterBulan').val();
+
+  const filtered = allData.filter(row => {
+    const usia = hitungUsia(row.tanggal_lahir, row.tanggal);
+    const rowBulan = row.bulan;
+
+    let bulanMatch = !selectedBulan || rowBulan === selectedBulan;
+
+    let usiaMatch = true;
+    if (usia !== null && selectedUsia) {
+      switch (selectedUsia) {
+        case '0_1': usiaMatch = usia < 1; break;
+        case '1_3': usiaMatch = usia >= 1 && usia < 3; break;
+        case '3_5': usiaMatch = usia >= 3 && usia < 5; break;
+        case '5_7': usiaMatch = usia >= 5 && usia < 7; break;
+        default: usiaMatch = true;
+      }
+    }
+
+    return bulanMatch && usiaMatch;
+  });
+
+  renderTable(filtered);
+}
+
+</script>
+
+
+
+</body>
+</html>
