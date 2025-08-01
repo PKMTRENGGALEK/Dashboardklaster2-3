@@ -145,25 +145,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       const json = await res.json();
       const rows = json.data || json;
 
-      return rows.map(row => {
-        const tanggal = row["TANGGAL"] || "";
-        const bulanStr = ambilBulanDariTanggal(tanggal);
+     return rows
+  .map(row => {
+    const tanggal = row["TANGGAL"] || "";
+    const tanggalLahir = row["TANGGAL LAHIR"] || "";
 
-        return {
-          ruangan: row["Ruangan"] || source.nama.split(")")[0].replace("(", "").trim(),
-          tanggal,
-          bulan: bulanStr,
-          nama: row["NAMA"] || "",
-          umur: row["UMUR"] || "",
-          nik: row["NIK"] || "",
-          tanggal_lahir: row["TANGGAL LAHIR"] || "",
-          alamat: row["ALAMAT"] || "",
-          tinggi: row["Tinggi"] || "",
-          berat: row["Berat"] || "",
-          lingkar: row["Lingkar Kepala"] || "",
-          perawat: source.nama.split(")")[1]?.trim() || "",
-        };
-      });
+    const usia = hitungUsia(tanggalLahir, tanggal);
+    if (usia === null || usia > 7) return null; // ✅ skip jika usia tidak valid atau > 7 tahun
+
+    const bulanStr = ambilBulanDariTanggal(tanggal);
+
+    return {
+      ruangan: row["Ruangan"] || source.nama.split(")")[0].replace("(", "").trim(),
+      tanggal,
+      bulan: bulanStr,
+      nama: row["NAMA"] || "",
+      umur: row["UMUR"] || "",
+      nik: row["NIK"] || "",
+      tanggal_lahir: tanggalLahir,
+      alamat: row["ALAMAT"] || "",
+      tinggi: row["Tinggi"] || "",
+      berat: row["Berat"] || "",
+      lingkar: row["Lingkar Kepala"] || "",
+      perawat: source.nama.split(")")[1]?.trim() || "",
+    };
+  })
+  .filter(item => item !== null); // hanya data valid yang dimasukkan
+
     } catch (err) {
       console.error("Gagal fetch dari:", source.nama, err);
       return [];
