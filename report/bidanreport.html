@@ -8,17 +8,10 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <!-- DataTables -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"
-    />
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-
     <style>
       body {
         background: linear-gradient(to bottom right, #ffffff, #ffe6f0);
@@ -60,9 +53,10 @@
   <body>
     <div class="container my-4">
       <a href="../index.html" class="btn btn-outline-danger mb-3">⬅️ Kembali</a>
-
+      
       <h4 class="mb-4 text-center">Rekap Per Bulan (Total Data Per Orang)</h4>
       <div class="table-responsive">
+        <a href="detailrekapbidan.html" class="btn btn-primary btn-sm rounded-full shadow mb-2"><i class="bi bi-card-checklist text-white"> Lihat Detail Data</i></a>
         <table class="table table-bordered table-hover table-sm">
           <thead class="table-success">
             <tr>
@@ -80,16 +74,15 @@
               <th>Nov</th>
               <th>Des</th>
               <th>Total</th>
-              <!-- Tambahkan kolom Total -->
             </tr>
           </thead>
           <tbody id="rekapPerBulanBody"></tbody>
-          <!-- <tfoot class="table-warning fw-bold text-center">
-            <tr id="rekapTotalRow">
+          <tfoot>
+            <tr class="fw-bold text-success" id="rowTotal">
               <td>Total</td>
-             
+              <td colspan="14"></td>
             </tr>
-          </tfoot> -->
+          </tfoot>
         </table>
       </div>
 
@@ -144,47 +137,6 @@
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-        <div class="mt-5 card-custom">
-          <h5 class="text-center mb-3">Tabel Data Lengkap Semua Petugas</h5>
-          <div class="table-responsive">
-            <div class="row mb-2">
-              <div class="col-md-4">
-                <label for="filterUsia" class="form-label">Filter Usia:</label>
-                <select id="filterUsia" class="form-select">
-                  <option value="">Semua Usia</option>
-                  <option value="bayi">0–1 Tahun (Bayi)</option>
-                  <option value="balita_awal">1–3 Tahun (Balita awal)</option>
-                  <option value="balita_akhir">3–5 Tahun (Balita akhir)</option>
-                  <option value="prasekolah">
-                    5–7 Tahun (Usia prasekolah)
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <table
-              id="tabelLengkap"
-              class="table table-bordered table-sm table-striped"
-            >
-              <thead class="table-success text-center">
-                <tr>
-                  <th>Ruangan</th>
-                  <th>TANGGAL</th>
-                  <th>NAMA</th>
-                  <th>UMUR</th>
-                  <th>NIK</th>
-                  <th>TANGGAL LAHIR</th>
-                  <th>ALAMAT</th>
-                  <th>Tinggi</th>
-                  <th>Berat</th>
-                  <th>Lingkar Kepala</th>
-                  <th>Petugas</th>
-                </tr>
-              </thead>
-              <tbody id="tabelLengkapBody"></tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -427,177 +379,82 @@
         document.getElementById("kelompok_5_7").textContent =
           kelompok["5–7 Tahun"];
       }
-      function tampilkanTabelLengkap(dataSemua) {
-        const tbodyLengkap = document.getElementById("tabelLengkapBody");
-        tbodyLengkap.innerHTML = "";
 
-        dataSemua.forEach((obj) => {
-          const petugas = obj.nama;
-          obj.rows.forEach((row) => {
-            const umurStr = row["UMUR"] || row["Umur"] || "";
-            const totalBulan = parseUmur(umurStr);
-            let usiaKategori = "";
+    async function fetchAndProcess() {
+      const totalPerBulan = Array(12).fill(0);
+      semuaData = [];
 
-            if (totalBulan !== null && !isNaN(totalBulan)) {
-              if (totalBulan <= 12) usiaKategori = "bayi";
-              else if (totalBulan <= 36) usiaKategori = "balita_awal";
-              else if (totalBulan <= 60) usiaKategori = "balita_akhir";
-              else if (totalBulan <= 84) usiaKategori = "prasekolah";
-            }
+      // 1. Tampilkan semua baris "memuat..."
+      dataSources.forEach((source) => {
+        const loadingRow = createLoadingRow(source.nama);
+        $tbody.appendChild(loadingRow);
+      });
 
-            const tr = document.createElement("tr");
-            tr.setAttribute("data-usia", usiaKategori);
-            tr.innerHTML = `
-        <td>${row["Ruangan"] || ""}</td>
-        <td>${row["Tanggal"] || row["TANGGAL"] || ""}</td>
-        <td>${row["NAMA"] || row["Nama"] || ""}</td>
-        <td>${umurStr}</td>
-        <td>${row["NIK"] || ""}</td>
-        <td>${row["TANGGAL LAHIR"] || row["Tanggal Lahir"] || ""}</td>
-        <td>${row["ALAMAT"] || row["Alamat"] || ""}</td>
-        <td>${row["Tinggi"] || ""}</td>
-        <td>${row["Berat"] || ""}</td>
-        <td>${row["Lingkar Kepala"] || ""}</td>
-        <td>${petugas}</td>
-      `;
-            tbodyLengkap.appendChild(tr);
-          });
-        });
+      // 2. Jalankan semua fetch secara paralel
+      const fetchPromises = dataSources.map((source) =>
+        fetch(source.url)
+          .then((res) => res.json())
+          .then((json) => {
+            const data = (json.data || []).filter((row) =>
+              Object.values(row).some((val) => val !== "" && val != null)
+            );
 
-        // Custom filter usia
-        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(
-          (f) => f.name !== "filterUsia"
-        ); // clear old filter if any
-
-        $.fn.dataTable.ext.search.push(function filterUsia(
-          settings,
-          data,
-          dataIndex
-        ) {
-          if (settings.nTable.id !== "tabelLengkap") return true;
-
-          const selected = document.getElementById("filterUsia").value;
-          const usiaKategori =
-            settings.aoData[dataIndex].nTr.getAttribute("data-usia");
-
-          if (!selected) return true;
-          return usiaKategori === selected;
-        });
-
-        // Inisialisasi DataTable
-        setTimeout(() => {
-          if ($.fn.dataTable.isDataTable("#tabelLengkap")) {
-            $("#tabelLengkap").DataTable().destroy();
-          }
-
-          const dt = $("#tabelLengkap").DataTable({
-            pageLength: 10,
-            lengthMenu: [5, 10, 25, 50, 100],
-          });
-
-          // Trigger filter ulang saat filter usia berubah
-          document
-            .getElementById("filterUsia")
-            .addEventListener("change", function () {
-              dt.draw();
-            });
-        }, 200);
-      }
-
-      function fetchAndProcess() {
-        dataSources.forEach((source) => {
-          $tbody.appendChild(createLoadingRow(source.nama));
-        });
-
-        Promise.all(
-          dataSources.map((source) =>
-            fetch(source.url)
-              .then((res) => res.json())
-              .then((json) => {
-                const data = (json.data || []).filter((row) =>
-                  Object.values(row).some((val) => val !== "" && val != null)
+            const bulanCount = Array(12).fill(0);
+            data.forEach((row) => {
+              const tgl = row["Tanggal"] || row["TANGGAL"] || "";
+              const parts = tgl.split("/");
+              let date = new Date(tgl);
+              if (parts.length === 3) {
+                date = new Date(
+                  `${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`
                 );
-
-                const bulanCount = Array(12).fill(0);
-                data.forEach((row) => {
-                  const tgl = row["Tanggal"] || row["TANGGAL"] || "";
-                  const parts = tgl.split("/");
-                  let date = new Date(tgl);
-                  if (parts.length === 3) {
-                    date = new Date(
-                      `${parts[2]}-${parts[0].padStart(
-                        2,
-                        "0"
-                      )}-${parts[1].padStart(2, "0")}`
-                    );
-                  }
-                  if (!isNaN(date)) {
-                    const month = date.getMonth();
-                    bulanCount[month]++;
-                  }
-                });
-
-                return { nama: source.nama, count: bulanCount, rows: data };
-              })
-              .catch(() => ({
-                nama: source.nama,
-                count: Array(12).fill("-"),
-                rows: [],
-              }))
-          )
-        ).then((allResults) => {
-          semuaData = allResults;
-
-          let totalPerKolom = Array(12).fill(0); // total bulanan
-          let totalKeseluruhan = 0;
-
-          allResults.forEach((res) => {
-            const row = document.createElement("tr");
-            let totalBaris = 0;
-            const cells = res.count.map((n, i) => {
-              if (typeof n === "number" && n > 0) {
-                totalPerKolom[i] += n;
-                totalBaris += n;
-                return `<td>${n}</td>`;
-              } else {
-                return `<td></td>`;
+              }
+              if (!isNaN(date)) {
+                const month = date.getMonth();
+                bulanCount[month]++;
+                totalPerBulan[month]++;
               }
             });
 
-            totalKeseluruhan += totalBaris;
-
+            const totalOrang = bulanCount.reduce((a, b) => a + b, 0);
+            const row = document.createElement("tr");
             row.innerHTML =
-              `<td class="text-start">${res.nama}</td>` +
-              cells.join("") +
-              `<td class="fw-bold bg-light">${totalBaris}</td>`; // Kolom total per baris
+              `<td class="text-start">${source.nama}</td>` +
+              bulanCount.map((n) => `<td>${n > 0 ? n : ""}</td>`).join("") +
+              `<td class="fw-bold text-primary">${totalOrang}</td>`;
 
-            const loadingRow = document.getElementById(
-              `loading-${res.nama.replace(/\s+/g, "-")}`
-            );
-            if (loadingRow) $tbody.replaceChild(row, loadingRow);
-          });
-          const totalRow = document.createElement("tr");
-          totalRow.className = "fw-bold bg-warning text-center";
+            semuaData.push({ nama: source.nama, count: bulanCount, rows: data });
 
-          totalRow.innerHTML =
-            `<td class="bg-secondary">Total</td>` +
-            totalPerKolom
-              .map((t) => `<td class="bg-secondary">${t}</td>`)
-              .join("") +
-            `<td>${totalKeseluruhan}</td>`;
+            const loadingRowNow = document.getElementById(`loading-${source.nama.replace(/\s+/g, "-")}`);
+            if (loadingRowNow) $tbody.replaceChild(row, loadingRowNow);
+          })
+          .catch((err) => {
+            console.error("Gagal fetch:", source.nama, err);
+            const loadingRowNow = document.getElementById(`loading-${source.nama.replace(/\s+/g, "-")}`);
+            if (loadingRowNow) {
+              loadingRowNow.innerHTML = `<td colspan="14" class="text-danger text-start">❌ Gagal memuat data ${source.nama}</td>`;
+            }
+          })
+      );
 
-          $tbody.appendChild(totalRow);
+      // 3. Tunggu semua selesai
+      await Promise.allSettled(fetchPromises);
 
-          tampilkanBulanFilter(allResults);
-          tampilkanGrafikKelompokUmur(allResults);
-          tampilkanTabelLengkap(allResults);
-        });
-      }
+      // 4. Update total footer dan grafik
+      const totalSemua = totalPerBulan.reduce((a, b) => a + b, 0);
+      const rowTotal = document.getElementById("rowTotal");
+      rowTotal.innerHTML =
+        `<td class="text-center text-primary" >Total</td>` +
+        totalPerBulan.map((n) => `<td class="text-center text-danger " style="font-size:14px;" >${n}</td>`).join("") +
+        `<td class="text-danger text-center">${totalSemua}</td>`;
+
+      tampilkanBulanFilter(semuaData);
+      tampilkanGrafikKelompokUmur(semuaData);
+    }
 
       bulanFilter.addEventListener("change", () => {
         tampilkanGrafikKelompokUmur(semuaData, bulanFilter.value);
       });
-
       window.addEventListener("DOMContentLoaded", fetchAndProcess);
     </script>
   </body>

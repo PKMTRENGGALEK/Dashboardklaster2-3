@@ -95,6 +95,7 @@
               <th>Okt</th>
               <th>Nov</th>
               <th>Des</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody id="rekapBody"></tbody>
@@ -130,6 +131,7 @@
         </div>
       
         <div class="chart-container" style="position: relative; height:400px;">
+          
           <canvas id="grafikCKG"></canvas>
         </div>
       </div>
@@ -159,6 +161,8 @@
         </div>
       </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
     <script>
       const perawatList = [
         [
@@ -233,66 +237,78 @@
       ];
         
       function getMonthIndex(dateString) {
-        const date = new Date(dateString);
-        return isNaN(date) ? -1 : date.getMonth();
-      }
+    const parsed = new Date(dateString);
+    return isNaN(parsed) ? -1 : parsed.getMonth(); // 0–11
+  }
 
-      async function fetchPerawatData(nama, url) {
-        const rowId = "row-" + nama.replace(/\s+/g, "_");
-        const loadingRow = `<tr id="${rowId}" class="loading-row">
-      <td colspan="13"><div class="spinner-border spinner-border-sm text-success me-2" role="status"></div> Memuat data ${nama}...</td>
+  const totalPerBulan = Array(12).fill(0);
+  let totalKeseluruhan = 0;
+
+  async function fetchPerawatData(nama, url) {
+    const rowId = "row-" + nama.replace(/\s+/g, "_");
+    const loadingRow = `<tr id="${rowId}" class="loading-row">
+      <td colspan="14">
+        <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div> Memuat data ${nama}...
+      </td>
     </tr>`;
-        $("#rekapBody").append(loadingRow);
+    $("#rekapBody").append(loadingRow);
 
-        try {
-          const res = await fetch(url + "?nocache=" + Date.now());
-          const json = await res.json();
-          const data = json.data || [];
+    try {
+      const res = await fetch(url + "?nocache=" + Date.now());
+      const json = await res.json();
+      const data = json.data || [];
 
-          const counts = Array(12).fill(0);
-          data.forEach((row) => {
-            const tanggal = row.Tanggal || row.TANGGAL || row.tanggal;
-            const idx = getMonthIndex(tanggal);
-            if (idx >= 0) counts[idx]++;
+      const counts = Array(12).fill(0);
+      data.forEach((row) => {
+        const tanggal = row.Tanggal || row.TANGGAL || row.tanggal;
+        const idx = getMonthIndex(tanggal);
+        if (idx >= 0) counts[idx]++;
 
-            const umur = parseInt(row.Umur || row.UMUR || row.umur);
-            const desa = row.Desa || row.DESA || row.desa || "Tidak Diketahui";
-
-            if (!isNaN(umur)) {
-                updateWilayahData(desa, umur, tanggal);
-
-            }
-            });
-
-          const total = counts.reduce((a, b) => a + b, 0);
-          updateChart(nama, total, counts); // <<-- INI WAJIB AGAR CHART TERISI
-
-          const newRow =
-          `<tr><td>${nama}</td>` +
-          counts.map((c) => `<td>${c === 0 ? "" : c}</td>`).join("") +
-          `</tr>`;
-
-
-          $(`#${rowId}`).replaceWith(newRow);
-        } catch (error) {
-          console.warn(`Gagal memuat data untuk ${nama}:`, error);
-          const errorRow = `<tr class="error-row"><td>${nama}</td><td colspan="12">Gagal memuat data</td></tr>`;
-          $(`#${rowId}`).replaceWith(errorRow);
-        }
-      }
-
-      async function loadData() {
-        const promises = perawatList.map(([nama, url]) =>
-          fetchPerawatData(nama, url)
-        );
-        await Promise.all(promises);
-        renderChart(); // <<-- WAJIB AGAR GRAFIK MUNCUL SETELAH DATA LENGKAP
-        renderWilayahChart(); // grafik wilayah
-      }
-
-      $(document).ready(() => {
-        loadData();
+        const umur = parseInt(row.Umur || row.UMUR || row.umur);
+        const desa = row.Desa || row.DESA || row.desa || "Tidak Diketahui";
+        if (!isNaN(umur)) updateWilayahData(desa, umur, tanggal);
       });
+
+      const total = counts.reduce((a, b) => a + b, 0);
+      updateChart(nama, total, counts);
+
+      // Tambah ke total bulan & total keseluruhan
+      counts.forEach((val, i) => totalPerBulan[i] += val);
+      totalKeseluruhan += total;
+
+      const newRow =
+        `<tr><td>${nama}</td>` +
+        counts.map((c) => `<td>${c === 0 ? "" : c}</td>`).join("") +
+        `<td><strong>${total}</strong></td></tr>`;
+
+      $(`#${rowId}`).replaceWith(newRow);
+    } catch (error) {
+      console.warn(`Gagal memuat data untuk ${nama}:`, error);
+      const errorRow = `<tr class="error-row"><td>${nama}</td><td colspan="13">Gagal memuat data</td></tr>`;
+      $(`#${rowId}`).replaceWith(errorRow);
+    }
+  }
+
+  async function loadData() {
+    const promises = perawatList.map(([nama, url]) => fetchPerawatData(nama, url));
+    await Promise.all(promises);
+
+    // Tampilkan baris total
+    const totalRow = `<tr class="table-success fw-bold">
+      <td>Total</td>` +
+      totalPerBulan.map((t) => `<td>${t === 0 ? "" : t}</td>`).join("") +
+      `<td>${totalKeseluruhan}</td>
+    </tr>`;
+
+    $("#rekapBody").append(totalRow);
+
+    renderChart();
+    renderWilayahChart();
+  }
+
+  $(document).ready(() => {
+    loadData();
+  });
     </script>
 
     <script>
@@ -311,31 +327,50 @@
       }
 
       function renderChart() {
-        const ctx = document.getElementById("grafikCKG").getContext("2d");
-        window.myChart = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: chartLabels,
-            datasets: [
-              {
-                label: "Jumlah Kegiatan",
-                data: chartData,
-                backgroundColor: "#66bb6a",
-              },
-            ],
+  const ctx = document.getElementById("grafikCKG").getContext("2d");
+
+  window.myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: chartLabels,
+      datasets: [
+        {
+          label: "Jumlah Kegiatan",
+          data: chartData,
+          backgroundColor: "#66bb6a",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 },
+        },
+      },
+      plugins: {
+        tooltip: {
+          enabled: true,
+        },
+        legend: {
+          display: false,
+        },
+        datalabels: {
+          anchor: "end",
+          align: "start",
+          formatter: Math.round,
+          font: {
+            weight: "bold",
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false, // biar bisa kita atur tinggi manual
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: { precision: 0 },
-              },
-            },
-          },
-        });
-      }
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
 
       function filterGrafikByBulan() {
         const selectedBulan = document.getElementById("bulanFilter").value;
