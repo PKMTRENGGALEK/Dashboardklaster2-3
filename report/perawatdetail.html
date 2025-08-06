@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Skrining Kesehatan</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- DataTables CSS -->
+    <link
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <!-- DataTables Buttons CSS -->
+    <link
+      href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-size: 0.85rem;
+      }
+
+      .spinner-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="spinner-overlay" id="loadingSpinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Memuat...</span>
+      </div>
+    </div>
+    <a href="perawatreport.html" class="btn btn-outline-primary mb-3">⬅️ Kembali</a>
+    <div class="container mt-4 small">
+      <h3 class="mb-3">Rekap Data Skrining Kesehatan</h3>\<div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+      <table
+        id="skriningTable"
+        class="table table-striped table-bordered table-sm"
+        style="width: 100%"
+      >
+        <thead class="table-dark">
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>NIK</th>
+            <th>L/P</th>
+            <th>Umur</th>
+            <th>Desa</th>
+            <th>Tensi</th>
+            <th>Nadi</th>
+            <th>Suhu</th>
+            <th>RR</th>
+            <th>TB</th>
+            <th>BB</th>
+            <th>LP</th>
+            <th>CVA</th>
+            <th>DM</th>
+            <th>Jantung</th>
+            <th>PPOK</th>
+            <th>CATIN</th>
+            <th>IVA</th>
+            <th>CA</th>
+            <th>Jiwa</th>
+            <th>Indera</th>
+            <th>Gilut</th>
+            <th>TBC</th>
+            <th>HIV</th>
+            <th>HEP</th>
+            <th>ADL</th>
+            <th>Time</th>
+            <th>Petugas</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      </div>
+      </div>
+    </div>
+
+    <!-- Script Section -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+    <script>
+      const dataSources = [
+        {
+          nama: "Nurjanah",
+          url: "https://script.google.com/macros/s/AKfycbxqg8Ofzsb2z4mgvPd2JbAZ9mIG1tTVqnYUuPGiwRBbG2eXzN8IKDe2j1-tdP1Mk3f4yQ/exec",
+        },
+        {
+          nama: "Seliya",
+          url: "https://script.google.com/macros/s/AKfycbwLOlot03yeijTLyIVwh5MMKY-7uhmqcjYKU8jl9Irg6aSH_K0Gpz44YF_82EcMlnph/exec",
+        },
+        {
+          nama: "Oktarina",
+          url: "https://script.google.com/macros/s/AKfycby8vnPODb4aH5UHl4ELJCN1JNFQp0G_ARBZS4EksSB64r7G6-z4JcPa3WLcdwVkR7c-/exec",
+        },
+        {
+          nama: "Dwiyanti",
+          url: "https://script.google.com/macros/s/AKfycbxo_BDW02PL2UpzIMmaTwbfuWcV8praEfPPAO6qgz9D2NKXJvXTOAKcwX5nyCkbJPwR/exec",
+        },
+        {
+          nama: "Lisa",
+          url: "https://script.google.com/macros/s/AKfycbxl2Cce-MFpIKCi9qqlj-oS298YfvYbSbtez_nA1L-W6ByD9Q77MNmHu-ALvuGZetelOA/exec",
+        },
+        {
+          nama: "Linda",
+          url: "https://script.google.com/macros/s/AKfycbzBS99j6hHmk1T8tvKGRL59fEFXgmYN2o7cS4YOnJO9AOmSc3CXK0QBPhLRgVitmcab/exec",
+        },
+        {
+          nama: "Tatik Sri Setyo Rahayu",
+          url: "https://script.google.com/macros/s/AKfycbw11Rvpa8MEOBEsqE1AFk-4rzp83wm-e3c0eAYAoKZTH2qLGjqycx46hw1a89a_HNsi2A/exec",
+        },
+        {
+          nama: "Bekti",
+          url: "https://script.google.com/macros/s/AKfycbxdgmrHy0s3epKM9zeesV_uW06itQUDWDt6HFP-NQyB5O3wNKrMeY_tbq1uJfshRjUZ5Q/exec",
+        },
+        {
+          nama: "Anjar",
+          url: "https://script.google.com/macros/s/AKfycby8Kop1wbhQuvPucvmUS8e4kTjzBKBZCgDwNofH73gVeIiES5pI9i7PbExDBrj9LlGt7w/exec",
+        },
+        {
+          nama: "Yanu",
+          url: "https://script.google.com/macros/s/AKfycbypk6SFWtKcrbYXMufu6Ih7EpZuB8GkhgzuCA4ouXfD7X_NEhJbkOzjIEuUALgtRvmvBg/exec",
+        },
+        {
+          nama: "Dwihayu",
+          url: "https://script.google.com/macros/s/AKfycbzp_LYb7kAfa8uK1ot7dsvGgjFLy7SkEmnOZNitrL7vV3f0YbL0QUEO685SOcmkbFT2/exec",
+        },
+        {
+          nama: "Nurkolis",
+          url: "https://script.google.com/macros/s/AKfycbxnfl9d95ylqLK10OWGh-GR8nF-om-a-4FX9XcmneTQlxGVp1MGxc3thRww4thGVTPW/exec",
+        },
+        {
+          nama: "Deny",
+          url: "https://script.google.com/macros/s/AKfycbwALZK-_UNyqv3RvSXalekF8F9C9VJR1hJk65nzMVl0E9if0CcBc3N8J7nLEM7yCHo8/exec",
+        },
+        {
+          nama: "Suprijono",
+          url: "https://script.google.com/macros/s/AKfycbz916HH22AfGE1S2xlMyK-Igf3fJnz8xP28F6qq0hydF_PGNZtOZPwvN5AoZlp1tHps9Q/exec",
+        },
+        {
+          nama: "Agus",
+          url: "https://script.google.com/macros/s/AKfycbxPGUnOR_86Hj3hGWXKOiZwFwWW68kJV2sHUgE8V5Hn7pBtMaXZ6VO4DzAHCsqRA9R_ng/exec",
+        },
+        {
+          nama: "Dina Aninggarwati",
+          url: "https://script.google.com/macros/s/AKfycbx3YZCDL7VZshSqdpxXBN0clvT6deVGtcegIbC5ChFfZpFrilcp2C_7MdpdJ7AH9j3A/exec",
+        },
+        {
+          nama: "Panji",
+          url: "https://script.google.com/macros/s/AKfycbxvsoTgEz2UyHCyDhrtFRRO7K5O8LmLitzL4KWK8AgPNNeMDXhPsCLekGFlGhQCIXuyUA/exec",
+        },
+      ];
+
+      const allData = [];
+
+      $(document).ready(function () {
+        let requests = dataSources.map((src) =>
+          fetch(src.url)
+            .then((res) => res.json())
+            .then((json) => {
+              if (json.data) {
+                json.data.forEach((row) => {
+                  allData.push([
+                    "", // placeholder untuk No (akan diisi otomatis oleh DataTable)
+                    row.Tanggal || "",
+                    row.Nama || "",
+                    row.NIK || "",
+                    row["L/P"] || "",
+                    row.Umur || "",
+                    row.Desa || "",
+                    row.Tensi || "",
+                    row.Nadi || "",
+                    row.Suhu || "",
+                    row.RR || "",
+                    row.TB || "",
+                    row.BB || "",
+                    row.LP || "",
+                    row["CVA (CHOL)"] || "",
+                    row["DM (GDA)"] || "",
+                    row.JANTUNG || "",
+                    row.PPOK || "",
+                    row.CATIN || "",
+                    row["IVA (Papsm)"] || "",
+                    row.CA || "",
+                    row.JIWA || "",
+                    row.Indera || "",
+                    row.Gilut || "",
+                    row.TBC || "",
+                    row.HIV || "",
+                    row.HEP || "",
+                    row.ADL || "",
+                    row.Time || "",
+                    src.nama,
+                  ]);
+                });
+              }
+            })
+        );
+
+        Promise.all(requests).then(() => {
+          $("#loadingSpinner").hide();
+          const table = $("#skriningTable").DataTable({
+            data: allData,
+            responsive: true,
+            pageLength:10,
+            order: [[1, "desc"]],
+            language: {
+              search: "Cari:",
+              lengthMenu: "Tampilkan _MENU_ entri",
+              info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+              paginate: {
+                first: "Pertama",
+                last: "Terakhir",
+                next: "Berikutnya",
+                previous: "Sebelumnya",
+              },
+            },
+            dom: "Bfrtip",
+            buttons: ["excelHtml5", "csvHtml5", "pdfHtml5", "print"],
+            columnDefs: [
+              {
+                targets: 0,
+                searchable: false,
+                orderable: false,
+              },
+            ],
+          });
+
+          // Isi nomor urut otomatis
+          table
+            .on("order.dt search.dt", function () {
+              table
+                .column(0, { search: "applied", order: "applied" })
+                .nodes()
+                .each(function (cell, i) {
+                  cell.innerHTML = i + 1;
+                });
+            })
+            .draw();
+        });
+      });
+    </script>
+  </body>
+</html>
