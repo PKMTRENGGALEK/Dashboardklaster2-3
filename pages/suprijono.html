@@ -266,7 +266,7 @@
     const scriptURL = "https://script.google.com/macros/s/AKfycbz916HH22AfGE1S2xlMyK-Igf3fJnz8xP28F6qq0hydF_PGNZtOZPwvN5AoZlp1tHps9Q/exec";
    const daftarDesa = ["KARANGSOKO", "SAMBIREJO", "KELUTAN", "SUMBERGEDONG", "TAMANAN", "NGANTRU", "LUAR WILAYAH"];
 
-   function formatDate(dateString) {
+    function formatDate(dateString) {
       const parts = dateString.split("/");
       if (parts.length === 3) {
         const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
@@ -508,9 +508,8 @@
           const bulan = $("#bulanFilterRekapTable").val();
           localStorage.setItem("data_pkg", JSON.stringify(filteredData));
           localStorage.setItem("bulan_pkg", bulan);
-          window.open("../print/print.suprijono.html", "_blank");
+          window.open("../print/printsuprijono.html", "_blank");
         });
-
     });
 </script>
 
