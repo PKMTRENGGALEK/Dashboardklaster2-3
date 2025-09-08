@@ -355,7 +355,7 @@
 
           // Tampilkan ke dalam tabel rekap per bulan
           const $rekapRow = $("#rekapPerBulanRow");
-          $rekapRow.empty().append("<td>Eny Karyawati</td>");
+          $rekapRow.empty().append("<td>Astutik</td>");
           bulanCount.forEach((count) => {
             $rekapRow.append(`<td>${count}</td>`);
           });
@@ -364,7 +364,7 @@
             data: allData,
             columns: usedKeys.map((key) => ({ data: key })),
             destroy: true,
-            // pageLength: 10,
+            pageLength: 10,
           });
 
           $spinner.hide();
