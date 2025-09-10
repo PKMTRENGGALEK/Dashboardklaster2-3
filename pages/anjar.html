@@ -266,14 +266,25 @@
     const scriptURL = "https://script.google.com/macros/s/AKfycby8Kop1wbhQuvPucvmUS8e4kTjzBKBZCgDwNofH73gVeIiES5pI9i7PbExDBrj9LlGt7w/exec";
    const daftarDesa = ["SUMBERGEDONG", "LUAR WILAYAH"];
    function formatDate(dateString) {
-      const parts = dateString.split("/");
-      if (parts.length === 3) {
-        const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
-        return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-      }
-      const d = new Date(dateString);
-      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-    }
+  const parts = dateString.split("/");
+  if (parts.length === 3) {
+    // parts[0] = bulan, parts[1] = hari, parts[2] = tahun
+    const month = parts[0].padStart(2, "0");
+    const day = parts[1].padStart(2, "0");
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+  }
+
+  const d = new Date(dateString);
+  if (isNaN(d)) return dateString;
+
+  // Format manual agar tidak mundur 1 hari
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 
     function bulanDariTanggal(dateString) {
       const date = new Date(dateString);
