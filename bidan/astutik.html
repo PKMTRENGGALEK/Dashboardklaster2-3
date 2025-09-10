@@ -340,7 +340,11 @@
             Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
           }));
 
-          const usedKeys = Object.keys(allData[0]);
+          // Buang key lama yang redundant (TANGGAL, DESA, dsb.)
+const usedKeys = Object.keys(allData[0]).filter(
+  (key) => !["TANGGAL", "DESA"].includes(key.toUpperCase())
+);
+
           $thead.empty();
           usedKeys.forEach((key) =>
             $thead.append(`<th class="text-center">${key}</th>`)
