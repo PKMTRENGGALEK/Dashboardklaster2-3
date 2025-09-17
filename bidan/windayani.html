@@ -163,7 +163,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "Rekap_CKG_Dina.xls";
+            a.download = "Rekap_CKG_Panji.xls";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -201,14 +201,13 @@
           </tr>
         </tfoot>
       </table>
-      <button onclick="exportRekapTableToExcel()" class="btn btn-success mt-3">📄 Export Tabel Utama ke Excel</button>
-      
+      <button onclick="exportRekapToExcel()" class="btn btn-success mt-3">📄 Export Rekap ke Excel</button>
 
       <!-- Grafik -->
       <div class="mt-4">
         <canvas id="rekapChart" height="100"></canvas>
       </div>
-     
+      
     <div>
       <a href="https://docs.google.com/spreadsheets/d/1AehDyS7R-8PDtoJtPqdTYAOo7OpA7Lbt-KVU83IUrEU/edit?usp=sharing" target="_blank" class="btn btn-outline-danger shadow">Lihat Data</a>
     </div>
@@ -268,14 +267,25 @@
    const daftarDesa = ["KARANGSOKO", "SAMBIREJO", "KELUTAN", "SUMBERGEDONG", "TAMANAN", "NGANTRU", "LUAR WILAYAH"];
 
    function formatDate(dateString) {
-      const parts = dateString.split("/");
-      if (parts.length === 3) {
-        const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
-        return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-      }
-      const d = new Date(dateString);
-      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-    }
+  const parts = dateString.split("/");
+  if (parts.length === 3) {
+    // parts[0] = bulan, parts[1] = hari, parts[2] = tahun
+    const month = parts[0].padStart(2, "0");
+    const day = parts[1].padStart(2, "0");
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+  }
+
+  const d = new Date(dateString);
+  if (isNaN(d)) return dateString;
+
+  // Format manual agar tidak mundur 1 hari
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 
     function bulanDariTanggal(dateString) {
       const date = new Date(dateString);
@@ -509,12 +519,11 @@
           const bulan = $("#bulanFilterRekapTable").val();
           localStorage.setItem("data_pkg", JSON.stringify(filteredData));
           localStorage.setItem("bulan_pkg", bulan);
-          window.open("../print/printdina.html", "_blank");
+          window.open("../print/printpanji.html", "_blank");
         });
+
     });
 </script>
-
-
 
   </body>
 </html>
