@@ -137,6 +137,7 @@
               </thead>
             </table>
             <button onclick="exportRekapTableToExcel()" class="btn btn-success mt-3">📄 Export Tabel Utama ke Excel</button>
+            <button id="btnPrintLaporan" class="btn btn-danger mt-3">🖨️ Print Laporan</button>
           </div>
         </div>
       </div>
@@ -263,256 +264,267 @@
 
    <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxPGUnOR_86Hj3hGWXKOiZwFwWW68kJV2sHUgE8V5Hn7pBtMaXZ6VO4DzAHCsqRA9R_ng/exec";
-   const daftarDesa = ["KARANGSOKO", "SAMBIREJO", "KELUTAN", "SUMBERGEDONG", "TAMANAN", "NGANTRU", "LUAR WILAYAH"];
+    const daftarDesa = ["KARANGSOKO", "SAMBIREJO", "KELUTAN", "SUMBERGEDONG", "TAMANAN", "NGANTRU", "LUAR WILAYAH"];
 
-   function formatDate(dateString) {
-      const parts = dateString.split("/");
-      if (parts.length === 3) {
-        const d = new Date(`${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`);
-        return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
-      }
-      const d = new Date(dateString);
-      return isNaN(d) ? dateString : d.toISOString().slice(0, 10);
+    function formatDate(dateString) {
+  const parts = dateString.split("/");
+  if (parts.length === 3) {
+    // parts[0] = bulan, parts[1] = hari, parts[2] = tahun
+    const month = parts[0].padStart(2, "0");
+    const day = parts[1].padStart(2, "0");
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+  }
+
+  const d = new Date(dateString);
+  if (isNaN(d)) return dateString;
+
+  // Format manual agar tidak mundur 1 hari
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+
+function bulanDariTanggal(dateString) {
+  const date = new Date(dateString);
+  return !isNaN(date) ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "";
+}
+
+let allData = [];
+
+$(document).ready(function () {
+  const $table = $("#rekapTable");
+  const $thead = $table.find("thead tr");
+  const $spinner = $("#loadingSpinner");
+  const $filterBulan = $("#filterBulan");
+  const $filterRekapBulan = $("#bulanFilterRekapTable");
+  
+
+  $spinner.show();
+
+  $.getJSON(scriptURL, function (response) {
+    allData = (response.data || []).filter(row => Object.values(row).some(val => val !== "" && val != null));
+
+    if (allData.length === 0) {
+      $spinner.html("<p class='text-danger'>Data kosong.</p>");
+      return;
     }
 
-    function bulanDariTanggal(dateString) {
-      const date = new Date(dateString);
-      return !isNaN(date) ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}` : "";
-    }
-
-    let allData = [];
-
-    $(document).ready(function () {
-      const $table = $("#rekapTable");
-      const $thead = $table.find("thead tr");
-      const $spinner = $("#loadingSpinner");
-      const $filterBulan = $("#filterBulan");
-      const $filterRekapBulan = $("#bulanFilterRekapTable");
-      
-
-      $spinner.show();
-
-      $.getJSON(scriptURL, function (response) {
-        allData = (response.data || []).filter(row => Object.values(row).some(val => val !== "" && val != null));
-
-        if (allData.length === 0) {
-          $spinner.html("<p class='text-danger'>Data kosong.</p>");
-          return;
-        }
-
-        allData = allData.map(row => {
-          const umurStr = (row["Umur"] || row["UMUR"] || "").toString().replace(/\D/g, "");
-          return {
-            ...row,
-            Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
-            Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
-            Umur: parseInt(umurStr || "0"),
-          };
-        });
-        
-        
-        const usedKeys =Object.keys(allData[0]); 
-        $thead.empty();
-        usedKeys.forEach(key => $thead.append(`<th>${key}</th>`));
-
-        $table.DataTable({
-          data: allData,
-          columns: [
-            ...usedKeys.map(key => ({ data: key }))
-          ],
-          destroy: true,
-          pageLength: 10,
-        });
-       $('#rekapTable tbody').on('click', '.btn-pkg', function (e) {
-          const row = $(this).closest('tr');
-          const rowData = $('#rekapTable').DataTable().row(row).data();
-
-          // Ambil array lama dari localStorage
-          let existingData = JSON.parse(localStorage.getItem('data_pkg') || '[]');
-
-          // Jika bukan array (misal sisa format lama), jadikan array
-          if (!Array.isArray(existingData)) existingData = [existingData];
-
-          // Hindari duplikasi berdasarkan NIK
-          const alreadyExists = existingData.some(item => item.NIK === rowData.NIK);
-          if (!alreadyExists) {
-            existingData.push(rowData);
-            localStorage.setItem('data_pkg', JSON.stringify(existingData));
-            alert('✅ Ditambahkan ke antrian cetak');
-          } else {
-            alert('⚠️ Data ini sudah ada di antrian cetak');
-          }
-        });
-
-
-
-        $spinner.hide();
-
-        const bulanSet = new Set();
-        allData.forEach(d => {
-          if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
-        });
-        Array.from(bulanSet).sort().forEach(b => {
-          $filterBulan.append(`<option value="${b}">${b}</option>`);
-        });
-        Array.from(bulanSet).sort().forEach(b => {
-          $filterRekapBulan.append(`<option value="${b}">${b}</option>`);
-        });
-        hitungRekap();
-
-        $filterBulan.on("change", function () {
-          hitungRekap($(this).val());
-        });
-        $filterRekapBulan.on("change", function () {
-          const selectedBulan = $(this).val();
-          const filteredData = selectedBulan
-            ? allData.filter(d => bulanDariTanggal(d.Tanggal) === selectedBulan)
-            : allData;
-
-          $table.DataTable().clear().rows.add(filteredData).draw();
-        });
-
-      });
-
-      function hitungRekap(filterBulan = "") {
-        const desaUtama = daftarDesa.filter(d => d !== "LUAR WILAYAH");
-        const rekap = {};
-
-        // Inisialisasi rekap
-        daftarDesa.forEach(desa => {
-            rekap[desa] = { lansia: 0, dewasa: 0 };
-        });
-
-        const dataFilter = allData.filter(d => {
-            if (filterBulan && d.Tanggal) {
-            return bulanDariTanggal(d.Tanggal) === filterBulan;
-            }
-            return true;
-        });
-
-        dataFilter.forEach(d => {
-            const umur = d.Umur;
-            const desa = (d.Desa || "").toUpperCase();
-
-            const isUtama = desaUtama.includes(desa);
-            const desaKategori = isUtama ? desa : "LUAR WILAYAH";
-
-            if (!rekap[desaKategori] || isNaN(umur)) return;
-
-            if (umur >= 60) rekap[desaKategori].lansia++;
-            else rekap[desaKategori].dewasa++;
-        });
-
-        let totalL = 0, totalD = 0;
-        const tbody = daftarDesa.map((desa, i) => {
-            const l = rekap[desa].lansia;
-            const d = rekap[desa].dewasa;
-            totalL += l;
-            totalD += d;
-            return `<tr><td>${i + 1}</td><td>${desa}</td><td>${l}</td><td>${d}</td></tr>`;
-        }).join("");
-
-        $("#rekapBody").html(tbody);
-        $("#totalLansia").text(totalL);
-        $("#totalDewasa").text(totalD);
-
-        // Grafik Chart.js
-        const labels = daftarDesa;
-        const lansiaData = daftarDesa.map(d => rekap[d].lansia);
-        const dewasaData = daftarDesa.map(d => rekap[d].dewasa);
-
-        if (window.rekapChart && typeof window.rekapChart.destroy === "function") {
-            window.rekapChart.destroy();
-        }
-
-        const ctx = document.getElementById("rekapChart").getContext("2d");
-
-        window.rekapChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-            labels: labels,
-            datasets: [
-                {
-                label: 'Lansia',
-                data: lansiaData,
-                backgroundColor: '#00bcd4'
-                },
-                {
-                label: 'Dewasa',
-                data: dewasaData,
-                backgroundColor: '#e91e63'
-                }
-            ]
-            },
-            options: {
-            responsive: true,
-            scales: {
-                y: {
-                beginAtZero: true,
-                ticks: { precision: 0 }
-                }
-            },
-            plugins: {
-                legend: { position: 'top' },
-                title: {
-                display: true,
-                text: 'Grafik Capaian Lansia & Dewasa per Desa'
-                },
-                datalabels: {
-                anchor: 'end',
-                align: 'top',
-                color: '#000',
-                font: {
-                    weight: 'bold'
-                },
-                formatter: Math.round
-                }
-            }
-            },
-            plugins: [ChartDataLabels]
-        });
-        }
-        $("#btnCetakRentang").on("click", function () {
-          const table = $("#rekapTable").DataTable();
-          const allFilteredData = table.rows({ search: 'applied' }).data().toArray();
-
-          const start = parseInt($("#startIndex").val(), 10) || 1;
-          const end = parseInt($("#endIndex").val(), 10) || allFilteredData.length;
-
-          if (start < 1 || end > allFilteredData.length || start > end) {
-            alert(`❌ Rentang tidak valid. Data tersedia dari 1 sampai ${allFilteredData.length}`);
-            return;
-          }
-
-          const selectedData = allFilteredData.slice(start - 1, end);
-
-          if (selectedData.length === 0) {
-            alert("⚠️ Tidak ada data dalam rentang ini.");
-            return;
-          }
-
-          localStorage.setItem("data_pkg", JSON.stringify(selectedData));
-          window.open("form-pkg.html", "_blank");
-        });
-        $("#btnPrintLaporan").on("click", function () {
-          const table = $("#rekapTable").DataTable();
-          const filteredData = table.rows({ search: "applied" }).data().toArray();
-
-          if (filteredData.length === 0) {
-            alert("⚠️ Tidak ada data untuk dicetak.");
-            return;
-          }
-
-          // Ambil bulan yang sedang difilter
-          const bulan = $("#bulanFilterRekapTable").val();
-          localStorage.setItem("data_pkg", JSON.stringify(filteredData));
-          localStorage.setItem("bulan_pkg", bulan);
-          window.open("../print/printagus.html", "_blank");
-        });
+    allData = allData.map(row => {
+      const umurStr = (row["Umur"] || row["UMUR"] || "").toString().replace(/\D/g, "");
+      return {
+        ...row,
+        Tanggal: formatDate(row["Tanggal"] || row["TANGGAL"]),
+        Desa: (row["Desa"] || row["DESA"] || "").toUpperCase(),
+        Umur: parseInt(umurStr || "0"),
+      };
     });
+    
+    
+    const usedKeys =Object.keys(allData[0]); 
+    $thead.empty();
+    usedKeys.forEach(key => $thead.append(`<th>${key}</th>`));
+
+    $table.DataTable({
+      data: allData,
+      columns: [
+        ...usedKeys.map(key => ({ data: key }))
+      ],
+      destroy: true,
+      pageLength: 10,
+    });
+   $('#rekapTable tbody').on('click', '.btn-pkg', function (e) {
+      const row = $(this).closest('tr');
+      const rowData = $('#rekapTable').DataTable().row(row).data();
+
+      // Ambil array lama dari localStorage
+      let existingData = JSON.parse(localStorage.getItem('data_pkg') || '[]');
+
+      // Jika bukan array (misal sisa format lama), jadikan array
+      if (!Array.isArray(existingData)) existingData = [existingData];
+
+      // Hindari duplikasi berdasarkan NIK
+      const alreadyExists = existingData.some(item => item.NIK === rowData.NIK);
+      if (!alreadyExists) {
+        existingData.push(rowData);
+        localStorage.setItem('data_pkg', JSON.stringify(existingData));
+        alert('✅ Ditambahkan ke antrian cetak');
+      } else {
+        alert('⚠️ Data ini sudah ada di antrian cetak');
+      }
+    });
+
+
+
+    $spinner.hide();
+
+    const bulanSet = new Set();
+    allData.forEach(d => {
+      if (d.Tanggal) bulanSet.add(bulanDariTanggal(d.Tanggal));
+    });
+    Array.from(bulanSet).sort().forEach(b => {
+      $filterBulan.append(`<option value="${b}">${b}</option>`);
+    });
+    Array.from(bulanSet).sort().forEach(b => {
+      $filterRekapBulan.append(`<option value="${b}">${b}</option>`);
+    });
+    hitungRekap();
+
+    $filterBulan.on("change", function () {
+      hitungRekap($(this).val());
+    });
+    $filterRekapBulan.on("change", function () {
+      const selectedBulan = $(this).val();
+      const filteredData = selectedBulan
+        ? allData.filter(d => bulanDariTanggal(d.Tanggal) === selectedBulan)
+        : allData;
+
+      $table.DataTable().clear().rows.add(filteredData).draw();
+    });
+
+  });
+
+  function hitungRekap(filterBulan = "") {
+    const desaUtama = daftarDesa.filter(d => d !== "LUAR WILAYAH");
+    const rekap = {};
+
+    // Inisialisasi rekap
+    daftarDesa.forEach(desa => {
+        rekap[desa] = { lansia: 0, dewasa: 0 };
+    });
+
+    const dataFilter = allData.filter(d => {
+        if (filterBulan && d.Tanggal) {
+        return bulanDariTanggal(d.Tanggal) === filterBulan;
+        }
+        return true;
+    });
+
+    dataFilter.forEach(d => {
+        const umur = d.Umur;
+        const desa = (d.Desa || "").toUpperCase();
+
+        const isUtama = desaUtama.includes(desa);
+        const desaKategori = isUtama ? desa : "LUAR WILAYAH";
+
+        if (!rekap[desaKategori] || isNaN(umur)) return;
+
+        if (umur >= 60) rekap[desaKategori].lansia++;
+        else rekap[desaKategori].dewasa++;
+    });
+
+    let totalL = 0, totalD = 0;
+    const tbody = daftarDesa.map((desa, i) => {
+        const l = rekap[desa].lansia;
+        const d = rekap[desa].dewasa;
+        totalL += l;
+        totalD += d;
+        return `<tr><td>${i + 1}</td><td>${desa}</td><td>${l}</td><td>${d}</td></tr>`;
+    }).join("");
+
+    $("#rekapBody").html(tbody);
+    $("#totalLansia").text(totalL);
+    $("#totalDewasa").text(totalD);
+
+    // Grafik Chart.js
+    const labels = daftarDesa;
+    const lansiaData = daftarDesa.map(d => rekap[d].lansia);
+    const dewasaData = daftarDesa.map(d => rekap[d].dewasa);
+
+    if (window.rekapChart && typeof window.rekapChart.destroy === "function") {
+        window.rekapChart.destroy();
+    }
+
+    const ctx = document.getElementById("rekapChart").getContext("2d");
+
+    window.rekapChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+        labels: labels,
+        datasets: [
+            {
+            label: 'Lansia',
+            data: lansiaData,
+            backgroundColor: '#00bcd4'
+            },
+            {
+            label: 'Dewasa',
+            data: dewasaData,
+            backgroundColor: '#e91e63'
+            }
+        ]
+        },
+        options: {
+        responsive: true,
+        scales: {
+            y: {
+            beginAtZero: true,
+            ticks: { precision: 0 }
+            }
+        },
+        plugins: {
+            legend: { position: 'top' },
+            title: {
+            display: true,
+            text: 'Grafik Capaian Lansia & Dewasa per Desa'
+            },
+            datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#000',
+            font: {
+                weight: 'bold'
+            },
+            formatter: Math.round
+            }
+        }
+        },
+        plugins: [ChartDataLabels]
+    });
+    }
+    $("#btnCetakRentang").on("click", function () {
+      const table = $("#rekapTable").DataTable();
+      const allFilteredData = table.rows({ search: 'applied' }).data().toArray();
+
+      const start = parseInt($("#startIndex").val(), 10) || 1;
+      const end = parseInt($("#endIndex").val(), 10) || allFilteredData.length;
+
+      if (start < 1 || end > allFilteredData.length || start > end) {
+        alert(`❌ Rentang tidak valid. Data tersedia dari 1 sampai ${allFilteredData.length}`);
+        return;
+      }
+
+      const selectedData = allFilteredData.slice(start - 1, end);
+
+      if (selectedData.length === 0) {
+        alert("⚠️ Tidak ada data dalam rentang ini.");
+        return;
+      }
+
+      localStorage.setItem("data_pkg", JSON.stringify(selectedData));
+      window.open("form-pkg.html", "_blank");
+    });
+    $("#btnPrintLaporan").on("click", function () {
+      const table = $("#rekapTable").DataTable();
+      const filteredData = table.rows({ search: "applied" }).data().toArray();
+
+      if (filteredData.length === 0) {
+        alert("⚠️ Tidak ada data untuk dicetak.");
+        return;
+      }
+
+      // Ambil bulan yang sedang difilter
+      const bulan = $("#bulanFilterRekapTable").val();
+      localStorage.setItem("data_pkg", JSON.stringify(filteredData));
+      localStorage.setItem("bulan_pkg", bulan);
+      window.open("../print/printseliya.html", "_blank");
+    });
+});
 </script>
 
 
 
-  </body>
+</body>
 </html>
