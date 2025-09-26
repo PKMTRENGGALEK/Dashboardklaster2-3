@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sasaran PKG Puskesmas Trenggalek</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --muted: #6c757d;
+      }
+      body {
+        background-color: #f7f8fb;
+        color: #222;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      .app-header {
+        padding: 2rem 0 1rem;
+      }
+      .card-person {
+        border: 0;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(28, 31, 46, 0.06);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.98),
+          rgba(255, 255, 255, 0.96)
+        );
+      }
+      .card-person:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(28, 31, 46, 0.09);
+      }
+      .avatar {
+        width: 84px;
+        height: 84px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 6px 18px rgba(34, 41, 47, 0.07);
+        margin-top: -42px; /* lift the avatar */
+      }
+      .card-body {
+        padding-top: 0.75rem;
+      }
+      .person-name {
+        font-weight: 600;
+        margin-bottom: 0;
+        font-size: 1rem;
+      }
+      .person-role {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .card-head {
+        height: 70px;
+        background: linear-gradient(90deg, #eef2ff, #ffffff);
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+      }
+      .grid-wrap {
+        padding-bottom: 3rem;
+      }
+      @media (max-width: 420px) {
+        .avatar {
+          width: 72px;
+          height: 72px;
+          margin-top: -36px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container py-4">
+      <header class="app-header text-center">
+        <h1 class="h4 mb-1">Sasaran PKG Puskesmas Trenggalek</h1>
+        <p class="text-muted mb-0">Daftar Petugas</p>
+        <div class="col-md-6 mx-auto">
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Cari nama petugas..."
+          />
+        </div>
+      </header>
+      <a href="index.html" class="btn btn-outline-danger btn-sm"
+        ><i class="bi bi-arrow-left"></i> Kembali</a
+      >
+      <section class="grid-wrap mt-4">
+        <div class="row g-3" id="cardsContainer">
+          <!-- Petugas cards -->
+          <!-- 11 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div
+              class="card card-person text-center pt-4"
+              data-url="https://script.google.com/macros/s/AKfycbwEsLcCv0pIVWN5lzxaUpI9onjZJ6SBihT1IfCEpiIr5ZAszTH1d7kNeW3b0SGeRaWXbQ/exec?nama=DEWI ANDRIKA ASMARA, S.Gz."
+            >
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=11"
+                  alt="Foto Dewi"
+                />
+                <h3 class="person-name mt-3">DEWI ANDRIKA ASMARA, S.Gz.</h3>
+                <div class="person-role">Nutrisionis</div>
+              </div>
+            </div>
+          </div>
+          <!-- 12 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=12"
+                  alt="Foto Rudy"
+                />
+                <h3 class="person-name mt-3">RUDY KURNIAWAN, A.Md.K.L.</h3>
+                <div class="person-role">Tenaga Sanitasi Lingkungan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 13 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=13"
+                  alt="Foto Wilda"
+                />
+                <h3 class="person-name mt-3">
+                  WILDA HAYYIN NAFI'AH, A.Md. Farm.
+                </h3>
+                <div class="person-role">Tenaga Teknis Kefarmasian</div>
+              </div>
+            </div>
+          </div>
+          <!-- 14 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=14"
+                  alt="Foto Titik"
+                />
+                <h3 class="person-name mt-3">TITIK SUWANTI, A.Md.AK</h3>
+                <div class="person-role">Pranata Laboratorium Kesehatan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 15 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=15"
+                  alt="Foto Anik"
+                />
+                <h3 class="person-name mt-3">ANIK HARYATI, A.Md.Kes.</h3>
+                <div class="person-role">Perawat Gigi</div>
+              </div>
+            </div>
+          </div>
+          <!-- 16 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=16"
+                  alt="Foto Luruh"
+                />
+                <h3 class="person-name mt-3">LURUH SETYORESMI, S.Gz.</h3>
+                <div class="person-role">Nutrisionis</div>
+              </div>
+            </div>
+          </div>
+          <!-- 17 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=17"
+                  alt="Foto Shevi"
+                />
+                <h3 class="person-name mt-3">SHEVI DWI ARDHIANI, S.KM</h3>
+                <div class="person-role">Promkes</div>
+              </div>
+            </div>
+          </div>
+          <!-- 18 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=18"
+                  alt="Foto Farhani"
+                />
+                <h3 class="person-name mt-3">FARHANI PUTRI MUNGGARANI, S.KM</h3>
+                <div class="person-role">Promkes</div>
+              </div>
+            </div>
+          </div>
+          <!-- 19 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=19"
+                  alt="Foto Ria"
+                />
+                <h3 class="person-name mt-3">RIA DWI YUSIANTI, A.Md.</h3>
+                <div class="person-role">Pranata Laboratorium Kesehatan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 20 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=20"
+                  alt="Foto Bella"
+                />
+                <h3 class="person-name mt-3">BELLA NURVITASARI, A.Md.Kes.</h3>
+                <div class="person-role">Tenaga Sanitasi Lingkungan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 21 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=21"
+                  alt="Foto Bety"
+                />
+                <h3 class="person-name mt-3">
+                  BETY NARISWARI AZIZAH, A.Md.RMIK
+                </h3>
+                <div class="person-role">Perekam Medis</div>
+              </div>
+            </div>
+          </div>
+          <!-- 22 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=22"
+                  alt="Foto Maratus"
+                />
+                <h3 class="person-name mt-3">MARATUS SOLIKAH, A.Md.Kes.Gi</h3>
+                <div class="person-role">Perawat Gigi</div>
+              </div>
+            </div>
+          </div>
+          <!-- 23 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=23"
+                  alt="Foto Novita"
+                />
+                <h3 class="person-name mt-3">NOVITA ANGGRAINI, A.Md.AK</h3>
+                <div class="person-role">Pranata Laboratorium Kesehatan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 24 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=24"
+                  alt="Foto Mufidatul"
+                />
+                <h3 class="person-name mt-3">MUFIDATUL MUNAWAROH, A.Md.AK</h3>
+                <div class="person-role">Pranata Laboratorium Kesehatan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 25 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=25"
+                  alt="Foto Mujahidah"
+                />
+                <h3 class="person-name mt-3">
+                  MUJAHIDAH FIDIENIA HARLIANI, A.Md.Gz.
+                </h3>
+                <div class="person-role">Nutrisionis</div>
+              </div>
+            </div>
+          </div>
+          <!-- 26 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=26"
+                  alt="Foto Adhita"
+                />
+                <h3 class="person-name mt-3">ADHITA AYU AGUSTIN, SKM</h3>
+                <div class="person-role">Epidemiolog Kesehatan</div>
+              </div>
+            </div>
+          </div>
+          <!-- 27 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=27"
+                  alt="Foto Dwihayu"
+                />
+                <h3 class="person-name mt-3">
+                  DWIHAYU PRASTYANDARTI, A.Md.Kep.
+                </h3>
+                <div class="person-role">Perawat</div>
+              </div>
+            </div>
+          </div>
+          <!-- 28 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=28"
+                  alt="Foto Edo"
+                />
+                <h3 class="person-name mt-3">EDO HERMAWAN</h3>
+                <div class="person-role">Operator Layanan Operasional</div>
+              </div>
+            </div>
+          </div>
+          <!-- 29 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=29"
+                  alt="Foto Fitri"
+                />
+                <h3 class="person-name mt-3">FITRI RETNA SARI</h3>
+                <div class="person-role">Pengadministrasi Perkantoran</div>
+              </div>
+            </div>
+          </div>
+          <!-- 30 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=30"
+                  alt="Foto Deni"
+                />
+                <h3 class="person-name mt-3">DENI WAHYU KURNIAWAN</h3>
+                <div class="person-role">Pengelola Umum Operasional</div>
+              </div>
+            </div>
+          </div>
+          <!-- 33 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=31"
+                  alt="Foto Anjar"
+                />
+                <h3 class="person-name mt-3">
+                  ANJAR TRI CAHYANINGSIH, A.Md.Kep
+                </h3>
+                <div class="person-role">Perawat</div>
+              </div>
+            </div>
+          </div>
+          <!-- 34 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=32"
+                  alt="Foto Nurjanah"
+                />
+                <h3 class="person-name mt-3">NURJANAH, A.Md.Kep</h3>
+                <div class="person-role">Perawat</div>
+              </div>
+            </div>
+          </div>
+          <!-- 35 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=33"
+                  alt="Foto Dwiyanti"
+                />
+                <h3 class="person-name mt-3">
+                  DWIYANTI PRA SETYANINGSIH, A.Md.Kep.
+                </h3>
+                <div class="person-role">Perawat</div>
+              </div>
+            </div>
+          </div>
+          <!-- 36 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=34"
+                  alt="Foto Oktarina"
+                />
+                <h3 class="person-name mt-3">OKTARINA FADLILAH, A.Md.Kep.</h3>
+                <div class="person-role">Perawat</div>
+              </div>
+            </div>
+          </div>
+          <!-- 37 -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-person text-center pt-4">
+              <div class="card-head"></div>
+              <div class="card-body d-flex flex-column align-items-center">
+                <img
+                  class="avatar"
+                  src="https://i.pravatar.cc/300?img=35"
+                  alt="Foto Lisa"
+                />
+                <h3 class="person-name mt-3">LISA ENDRIENI,</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const cardsContainer = document.getElementById("cardsContainer");
+      const cards = cardsContainer.getElementsByClassName("col-12");
+
+      searchInput.addEventListener("keyup", function () {
+        const filter = searchInput.value.toLowerCase();
+        for (let i = 0; i < cards.length; i++) {
+          const name = cards[i]
+            .querySelector(".person-name")
+            .textContent.toLowerCase();
+          if (name.indexOf(filter) > -1) {
+            cards[i].style.display = "";
+          } else {
+            cards[i].style.display = "none";
+          }
+        }
+      });
+      document.querySelectorAll(".card-person").forEach((card) => {
+        card.addEventListener("click", () => {
+          const apiUrl = card.dataset.url;
+          window.location.href =
+            "detailckglain.html?api=" + encodeURIComponent(apiUrl);
+        });
+      });
+    </script>
+  </body>
+</html>
