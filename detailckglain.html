@@ -78,19 +78,23 @@
       const apiUrl = params.get("api");
 
       // ambil nama dari parameter di dalam apiUrl
+      // Ambil nama dan jabatan dari parameter di dalam apiUrl
       let petugasNama = "";
+      let petugasJabatan = "";
+
       if (apiUrl) {
         const innerParams = new URLSearchParams(apiUrl.split("?")[1]);
-        petugasNama = innerParams.get("nama");
+        petugasNama = innerParams.get("nama") || "";
+        petugasJabatan = innerParams.get("jabatan") || "";
       }
 
       // Set judul halaman & label petugas
       if (petugasNama) {
         document.getElementById("pageTitle").textContent =
           "Detail Petugas: " + petugasNama;
-        document.getElementById(
-          "petugasInfo"
-        ).innerHTML = `<span class="badge bg-primary">Petugas: ${petugasNama}</span>`;
+
+        document.getElementById("petugasInfo").innerHTML =
+          `<span class="badge bg-primary">Petugas: ${petugasNama} | Jabatan: ${petugasJabatan}</span>`;
       }
 
       $(document).ready(function () {
@@ -275,6 +279,8 @@
           // const bulan = $("#bulanFilterRekapTable").val();
           localStorage.setItem("data_pkg", JSON.stringify(filteredData));
           localStorage.setItem("bulan_pkg", "Semua");
+          localStorage.setItem("petugas_nama", petugasNama); // <-- Tambahkan ini
+          localStorage.setItem("petugas_jabatan", petugasJabatan); // <-- Tambahkan ini
 
           window.open("reportlain.html", "_blank");
         });
