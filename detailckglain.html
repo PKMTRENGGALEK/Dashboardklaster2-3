@@ -40,25 +40,28 @@
       </div>
     </main>
 
-    <!-- Modal Bootstrap -->
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Data Tambahan</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div id="modalContent" class="row g-3"></div>
-          </div>
+   <!-- Modal Bootstrap -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Data Tambahan</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Layout dua kolom: label - nilai -->
+        <div id="modalContent" class="container-fluid">
+          <!-- Konten akan diisi via JS -->
         </div>
       </div>
     </div>
+  </div>
+</div>
 
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -136,9 +139,21 @@
                     }" />`;
                   },
                 };
-              } else {
-                return { title: col, data: col };
-              }
+              } else if (col === "Tanggal_Lahir") {
+  return {
+    title: col,
+    data: col,
+    render: function (data, type, row, meta) {
+      if (!data) return "-";
+      const date = new Date(data);
+      const options = { day: "2-digit", month: "long", year: "numeric" };
+      return date.toLocaleDateString("id-ID", options); // Output: 09 Mei 2022
+    },
+  };
+} else {
+  return { title: col, data: col };
+}
+
             });
 
             // Tambahkan tombol Detail
@@ -163,7 +178,7 @@
               const rowIndex = $(this).data("index");
               const rowData = data.find((d) => d.index === rowIndex);
 
-              const modalContent = document.getElementById("modalContent");
+            const modalContent = document.getElementById("modalContent");
               modalContent.innerHTML = "";
 
               headers.forEach((header) => {
@@ -173,19 +188,25 @@
                       ? rowData[header]
                       : "-";
 
-                  const col = document.createElement("div");
-                  col.className = "col-md-6";
-                  col.innerHTML = `
-                    <div class="card shadow-sm h-100">
-                      <div class="card-body">
-                        <h6 class="card-title">${header}</h6>
-                        <p class="card-text small mb-0">${value}</p>
-                      </div>
-                    </div>
-                  `;
-                  modalContent.appendChild(col);
+                  const row = document.createElement("div");
+                  row.className = "row py-2 border-bottom";
+
+                  const labelCol = document.createElement("div");
+                  labelCol.className = "col-sm-8 fw-semibold"; // label normal
+                  labelCol.textContent = header;
+
+                  const valueCol = document.createElement("div");
+                  valueCol.className = "col-sm-4 text-muted small"; // jawaban lebih kecil & abu
+                  valueCol.textContent = value;
+
+                  row.appendChild(labelCol);
+                  row.appendChild(valueCol);
+
+                  modalContent.appendChild(row);
                 }
               });
+
+
 
               const modal = new bootstrap.Modal(
                 document.getElementById("detailModal")
