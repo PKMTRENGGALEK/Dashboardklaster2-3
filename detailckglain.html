@@ -27,13 +27,13 @@
       <p id="petugasInfo" class="text-muted"></p>
 
       <div class="d-flex justify-content-between align-items-center mb-3">
-  <a href="ckglain.html" class="btn btn-outline-danger btn-sm">
-    <i class="bi bi-arrow-left"></i> Kembali
-  </a>
-  <button id="btnPrintLaporan" class="btn btn-danger btn-sm">
-    🖨️ Print Laporan
-  </button>
-</div>
+        <a href="ckglain.html" class="btn btn-outline-danger btn-sm">
+          <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+        <button id="btnPrintLaporan" class="btn btn-danger btn-sm">
+          🖨️ Print Laporan
+        </button>
+      </div>
 
       <!-- Table utama -->
       <div class="table-responsive mb-4">
@@ -45,28 +45,28 @@
       </div>
     </main>
 
-   <!-- Modal Bootstrap -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Data Tambahan</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <!-- Layout dua kolom: label - nilai -->
-        <div id="modalContent" class="container-fluid">
-          <!-- Konten akan diisi via JS -->
+    <!-- Modal Bootstrap -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Data Tambahan</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Layout dua kolom: label - nilai -->
+            <div id="modalContent" class="container-fluid">
+              <!-- Konten akan diisi via JS -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -81,11 +81,14 @@
       // Ambil nama dan jabatan dari parameter di dalam apiUrl
       let petugasNama = "";
       let petugasJabatan = "";
+      let petugasNIP = "";
 
       if (apiUrl) {
         const innerParams = new URLSearchParams(apiUrl.split("?")[1]);
         petugasNama = innerParams.get("nama") || "";
         petugasJabatan = innerParams.get("jabatan") || "";
+        petugasNIP = innerParams.get("nip") || ""; // pakai lowercase
+        petugasImg = innerParams.get("ttd") || ""; // pakai lowercase
       }
 
       // Set judul halaman & label petugas
@@ -93,8 +96,12 @@
         document.getElementById("pageTitle").textContent =
           "Detail Petugas: " + petugasNama;
 
-        document.getElementById("petugasInfo").innerHTML =
-          `<span class="badge bg-primary">Petugas: ${petugasNama} | Jabatan: ${petugasJabatan}</span>`;
+        document.getElementById("petugasInfo").innerHTML = `
+    <span class="badge bg-primary">
+      Petugas: ${petugasNama} | 
+      Jabatan: ${petugasJabatan} | 
+      ${petugasNIP.startsWith("NIP") ? petugasNIP : "NIP. " + petugasNIP}
+    </span>`;
       }
 
       $(document).ready(function () {
@@ -142,27 +149,30 @@
                   title: col,
                   data: col,
                   render: function (data, type, row, meta) {
-                    return `<input type="text" class="form-control form-control-sm etiket-input" 
+                    return `<input type="text" class="form-control form-control-sm etiket-input"
                               value="${data || ""}" data-index="${
                       row.index
                     }" />`;
                   },
                 };
               } else if (col === "Tanggal_Lahir") {
-  return {
-    title: col,
-    data: col,
-    render: function (data, type, row, meta) {
-      if (!data) return "-";
-      const date = new Date(data);
-      const options = { day: "2-digit", month: "long", year: "numeric" };
-      return date.toLocaleDateString("id-ID", options); // Output: 09 Mei 2022
-    },
-  };
-} else {
-  return { title: col, data: col };
-}
-
+                return {
+                  title: col,
+                  data: col,
+                  render: function (data, type, row, meta) {
+                    if (!data) return "-";
+                    const date = new Date(data);
+                    const options = {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    };
+                    return date.toLocaleDateString("id-ID", options); // Output: 09 Mei 2022
+                  },
+                };
+              } else {
+                return { title: col, data: col };
+              }
             });
 
             // Tambahkan tombol Detail
@@ -187,7 +197,7 @@
               const rowIndex = $(this).data("index");
               const rowData = data.find((d) => d.index === rowIndex);
 
-            const modalContent = document.getElementById("modalContent");
+              const modalContent = document.getElementById("modalContent");
               modalContent.innerHTML = "";
 
               headers.forEach((header) => {
@@ -214,8 +224,6 @@
                   modalContent.appendChild(row);
                 }
               });
-
-
 
               const modal = new bootstrap.Modal(
                 document.getElementById("detailModal")
@@ -267,23 +275,25 @@
           });
       });
       $("#btnPrintLaporan").on("click", function () {
-          const table = $("#detailTable").DataTable();
-          const filteredData = table.rows({ search: "applied" }).data().toArray();
+        const table = $("#detailTable").DataTable();
+        const filteredData = table.rows({ search: "applied" }).data().toArray();
 
-          if (filteredData.length === 0) {
-            alert("⚠️ Tidak ada data untuk dicetak.");
-            return;
-          }
+        if (filteredData.length === 0) {
+          alert("⚠️ Tidak ada data untuk dicetak.");
+          return;
+        }
 
-          // Ambil bulan yang sedang difilter
-          // const bulan = $("#bulanFilterRekapTable").val();
-          localStorage.setItem("data_pkg", JSON.stringify(filteredData));
-          localStorage.setItem("bulan_pkg", "Semua");
-          localStorage.setItem("petugas_nama", petugasNama); // <-- Tambahkan ini
-          localStorage.setItem("petugas_jabatan", petugasJabatan); // <-- Tambahkan ini
+        // Ambil bulan yang sedang difilter
+        // const bulan = $("#bulanFilterRekapTable").val();
+        localStorage.setItem("data_pkg", JSON.stringify(filteredData));
+        localStorage.setItem("bulan_pkg", "Semua");
+        localStorage.setItem("petugas_nama", petugasNama); // <-- Tambahkan ini
+        localStorage.setItem("petugas_jabatan", petugasJabatan); // <-- Tambahkan ini
+        localStorage.setItem("petugas_nip", petugasNIP); // <-- Tambahkan ini
+        localStorage.setItem("petugas_img", petugasImg); // <-- Tambahkan ini
 
-          window.open("reportlain.html", "_blank");
-        });
+        window.open("reportlain.html", "_blank");
+      });
     </script>
   </body>
 </html>
