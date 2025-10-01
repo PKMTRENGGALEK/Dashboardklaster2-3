@@ -436,8 +436,9 @@
             // 🧐 Cek duplikat
             const duplikat = [];
             const filtered = data.filter((row, idx) => {
-              const nama = (row["NAMA"] || "").toUpperCase().trim();
-              const nik = (row["NIK"] || "").trim();
+             const nama = String(row["NAMA"] || "").toUpperCase().trim();
+const nik = String(row["NIK"] || "").trim();
+
               const found = existingData.find(
                 (d) => d.nama === nama && d.nik === nik
               );
