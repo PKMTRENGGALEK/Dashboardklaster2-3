@@ -271,7 +271,7 @@
         const res = await fetch(scriptURL);
         const json = await res.json();
         existingData = (json.data || []).map((d) => ({
-          nama: (d.NAMA || d.Nama || "").toUpperCase().trim(),
+          nama: (d.NAMA || d.Nama || ""),
           nik: (d.NIK || "").trim(),
         }));
       }
