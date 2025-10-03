@@ -179,17 +179,32 @@
                   },
                 };
               } else if (col === "Tanggal") {
-                return {
-                  title: col,
-                  data: col,
-                  render: function (data, type, row, meta) {
-                    return `<input type="date" class="form-control form-control-sm tanggal-input"
-                              value="${data || ""}" data-index="${
-                      row.index
-                    }" />`;
-                  },
-                };
-              } else {
+  return {
+    title: col,
+    data: col,
+    render: function (data, type, row, meta) {
+      console.log("DEBUG Tanggal:", data, row); // 🔎 cek di console data yang masuk
+
+      // ambil langsung dari row (antisipasi kalau 'data' kosong)
+      let val = row[col] || "";
+
+      // pastikan format cocok YYYY-MM-DD
+      if (val) {
+        const d = new Date(val);
+        if (!isNaN(d)) {
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          val = `${year}-${month}-${day}`;
+        }
+      }
+
+      return `<input type="date" class="form-control form-control-sm tanggal-input"
+                value="${val}" data-index="${meta.row}" />`;
+    },
+  };
+}
+ else {
                 return { title: col, data: col };
               }
             });
