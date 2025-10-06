@@ -107,16 +107,13 @@
             >
               <div class="card-head"></div>
               <div class="card-body d-flex flex-column align-items-center">
-                <img
-                  class="avatar"
-                  src=""
-                  alt="Foto Dewi"
-                />
-                <h3 class="person-name mt-3">`FITRI RETNA SARI</h3>
+                <img class="avatar" src="" alt="Foto Dewi" />
+                <h3 class="person-name mt-3">FITRI RETNA SARI</h3>
                 <div class="person-role jabatan">-</div>
                 <div class="person-role nip">NIP. -</div>
-                <div class="img" style="display: none">
-                  -
+                <div class="img" style="display: none">-</div>
+                <div class="link" style="display: none">
+                  https://docs.google.com/spreadsheets/d/14xvCPabMW8WgTRmMHAOzRdknnVW6LYijdY4GXX9fr8U/edit?usp=drive_link
                 </div>
               </div>
             </div>
@@ -138,10 +135,13 @@
                 <div class="img" style="display: none">
                   ttd_197711072009031004.png
                 </div>
+                <div class="link" style="display: none">
+                  https://docs.google.com/spreadsheets/d/1leQF_MdTAFsProg6Fd0QFrBdcWtMbZtq2JC_0t0Xr2o/edit?usp=drive_link
+                </div>
               </div>
             </div>
           </div>
-         
+
           <!-- 14 -->
           <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div
@@ -159,10 +159,13 @@
                 <div class="img" style="display: none">
                   ttd_198004082011012011.jpg
                 </div>
+                <div class="link" style="display: none">
+                  https://docs.google.com/spreadsheets/d/1dyPq-0pA4Fo6Y28OUrUfz04C9AgT3Ynpa9zR1w2F2Wk/edit?usp=drive_link
+                </div>
               </div>
             </div>
           </div>
-         
+
           <!-- 20 -->
           <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div
@@ -180,18 +183,12 @@
                 <div class="img" style="display: none">
                   ttd_199705262019032001.png
                 </div>
+                <div class="link" style="display: none">
+                  https://docs.google.com/spreadsheets/d/1-JNX70MsiubQxH_Usv4U_Ku8y64jeQ-Q9XW1NMEvNNo/edit?usp=drive_link
+                </div>
               </div>
             </div>
           </div>
-          
-         
-         
-          
-          
-
-          
-          
-         
         </div>
       </section>
     </main>
@@ -232,13 +229,14 @@
           card.querySelector(".person-role")?.textContent.trim() || "";
         const nip = card.querySelector(".nip")?.textContent.trim() || "";
         const ttd = card.querySelector(".img")?.textContent.trim() || "";
+        const link = card.querySelector(".link")?.textContent.trim() || "";
 
         // Buat URL dengan query string
         const fullUrl = `${baseUrl}?nama=${encodeURIComponent(
           nama
         )}&jabatan=${encodeURIComponent(jabatan)}&nip=${encodeURIComponent(
           nip
-        )}&ttd=${encodeURIComponent(ttd)}`;
+        )}&ttd=${encodeURIComponent(ttd)}&link=${encodeURIComponent(link)}`;
 
         // Update attribute data-url
         card.dataset.url = fullUrl;

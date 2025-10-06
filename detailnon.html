@@ -49,6 +49,11 @@
           style="width: 100%"
         ></table>
       </div>
+      <div>
+        <a id="spreadsheetBtn" href="" class="btn btn-danger shadow"
+          >Buka Spreadsheet</a
+        >
+      </div>
     </main>
 
     <!-- Modal Bootstrap -->
@@ -88,6 +93,7 @@
       let petugasNama = "";
       let petugasJabatan = "";
       let petugasNIP = "";
+      let petugasLink = "";
 
       if (apiUrl) {
         const innerParams = new URLSearchParams(apiUrl.split("?")[1]);
@@ -95,6 +101,7 @@
         petugasJabatan = innerParams.get("jabatan") || "";
         petugasNIP = innerParams.get("nip") || ""; // pakai lowercase
         petugasImg = innerParams.get("ttd") || ""; // pakai lowercase
+        petugasLink = innerParams.get("link") || ""; // ✅ ambil link
       }
 
       // Set judul halaman & label petugas
@@ -109,7 +116,15 @@
       ${petugasNIP.startsWith("NIP") ? petugasNIP : "NIP. " + petugasNIP}
     </span>`;
       }
-
+      // ✅ Tampilkan link di tombol "Buka Spreadsheet"
+      if (petugasLink) {
+        document
+          .getElementById("spreadsheetBtn")
+          .setAttribute("href", petugasLink);
+        document
+          .getElementById("spreadsheetBtn")
+          .setAttribute("target", "_blank");
+      }
       $(document).ready(function () {
         if (!apiUrl) return;
 
@@ -178,32 +193,31 @@
                   },
                 };
               } else if (col === "Tanggal") {
-  return {
-    title: col,
-    data: col,
-    render: function (data, type, row, meta) {
-      console.log("DEBUG Tanggal:", data, row); // 🔎 cek di console data yang masuk
+                return {
+                  title: col,
+                  data: col,
+                  render: function (data, type, row, meta) {
+                    console.log("DEBUG Tanggal:", data, row); // 🔎 cek di console data yang masuk
 
-      // ambil langsung dari row (antisipasi kalau 'data' kosong)
-      let val = row[col] || "";
+                    // ambil langsung dari row (antisipasi kalau 'data' kosong)
+                    let val = row[col] || "";
 
-      // pastikan format cocok YYYY-MM-DD
-      if (val) {
-        const d = new Date(val);
-        if (!isNaN(d)) {
-          const year = d.getFullYear();
-          const month = String(d.getMonth() + 1).padStart(2, "0");
-          const day = String(d.getDate()).padStart(2, "0");
-          val = `${year}-${month}-${day}`;
-        }
-      }
+                    // pastikan format cocok YYYY-MM-DD
+                    if (val) {
+                      const d = new Date(val);
+                      if (!isNaN(d)) {
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, "0");
+                        const day = String(d.getDate()).padStart(2, "0");
+                        val = `${year}-${month}-${day}`;
+                      }
+                    }
 
-      return `<input type="date" class="form-control form-control-sm tanggal-input"
+                    return `<input type="date" class="form-control form-control-sm tanggal-input"
                 value="${val}" data-index="${meta.row}" />`;
-    },
-  };
-}
- else {
+                  },
+                };
+              } else {
                 return { title: col, data: col };
               }
             });
