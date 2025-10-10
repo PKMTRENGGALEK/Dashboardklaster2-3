@@ -136,11 +136,11 @@
           <tr>
             <th>No</th>
             <th>Nama Sekolah</th>
-            <th>Tanggal</th>
+            <th>Tanggal Input Asik</th>
             <th>Nama</th>
             <th>NIK</th>
             <th>L/P</th>
-            <th>Tanggal Lahir</th>
+            <th>Umur</th>
             <th>Alamat</th>
 
             <th>E-Tiket</th>
@@ -244,12 +244,14 @@
         const row = `<tr>
           <td>${i + 1}</td>
           <td>${d.Nama_Sekolah || ""}</td>
-          <td>${d.Tanggal || ""}</td>
+          <td>${
+            d.Tanggal ? new Date(d.Tanggal).toLocaleDateString("id-ID") : ""
+          }</td>
           <td>${d.Nama || ""}</td>
           <td>${d.NIK || ""}</td>
-          <td>${d.Jk || ""}</td>
-          <td>${d.Tanggal_Lahir || ""}</td>
-          <td>${d.Alamat || ""}</td>
+          <td>${d.JK || ""}</td>
+          <td>${d.Umur || ""}</td>
+          <td>${d.Desa || ""}</td>
      
           <td>${d.Etiket || ""}</td>
         </tr>`;
