@@ -137,6 +137,7 @@
               </thead>
             </table>
             <button onclick="exportRekapTableToExcel()" class="btn btn-success mt-3">📄 Export Tabel Utama ke Excel</button>
+            <button id="btnPrintLaporan" class="btn btn-danger mt-3">🖨️ Print Laporan</button>
           </div>
         </div>
       </div>
@@ -162,7 +163,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "Rekap_CKG_Deny Wahyu Purnomo.xls";
+            a.download = "Rekap_CKG_Agus.xls";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -200,8 +201,7 @@
           </tr>
         </tfoot>
       </table>
-      <button onclick="exportRekapTableToExcel()" class="btn btn-success mt-3">📄 Export Tabel Utama ke Excel</button>
-            <button id="btnPrintLaporan" class="btn btn-danger mt-3">🖨️ Print Laporan</button>
+      <button onclick="exportRekapToExcel()" class="btn btn-success mt-3">📄 Export Rekap ke Excel</button>
 
       <!-- Grafik -->
       <div class="mt-4">
@@ -519,7 +519,7 @@
           const bulan = $("#bulanFilterRekapTable").val();
           localStorage.setItem("data_pkg", JSON.stringify(filteredData));
           localStorage.setItem("bulan_pkg", bulan);
-          window.open("../print/printdeny.html", "_blank");
+          window.open("../print/printhayu.html", "_blank");
         });
     });
 </script>
