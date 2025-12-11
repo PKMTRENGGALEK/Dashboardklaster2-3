@@ -156,7 +156,8 @@
             <th>WA(+/-)</th>
             <th>CA</th>
             <th>Jiwa</th>
-            <th>Indera</th>
+            <th>Indera Pengelihatan</th>
+            <th>Indera Pendengaran</th>
             <th>Gigi</th>
             <th>TBC</th>
             <th>HIV</th>
@@ -166,23 +167,44 @@
         </thead>
         <tbody id="dataBody"></tbody>
       </table>
+    </div>
+    <div class="ttd-section" style="page-break-inside: avoid; margin-top: 40px">
+      <table style="width: 100%">
+        <tr>
+          <!-- Kolom Kiri -->
+          <td class="text-center align-top" style="width: 50%">
+            Mengetahui<br />
+            PJ KLASTER 3 (USIA DEWASA DAN LANSIA)<br />
+            <div style="position: relative; display: inline-block">
+              <img
+                src="ttd_198212082014062003.png"
+                alt="Tanda Tangan"
+                style="height: 100px; transform: translateY(20px)"
+              />
+              <div style="margin-top: -10px">
+                <strong>DINA ANINGGARWATI, AMd.Kep</strong><br />
+                NIP. 19821208 201406 2003
+              </div>
+            </div>
+          </td>
 
-      <div class="ttd-section">
-        <table>
-          <tr>
-            <td class="text-center" style="width: 50%">
-              Mengetahui<br />PJ KLASTER 3 (USIA DEWASA DAN LANSIA)<br /><br /><br /><br />
-              <strong>DINA ANUNGGARWATI, S.Kep</strong><br />NIP. 19821208
-              201406 2003
-            </td>
-            <td class="text-center" style="width: 50%">
-              Pelaksana CKG<br /><br /><br /><br />
-              <strong>DWIYANTI PRA SETYANINGSIH, A.Md.Kep.</strong
-              ><br />19980123 202203 2 003
-            </td>
-          </tr>
-        </table>
-      </div>
+          <!-- Kolom Kanan -->
+          <td class="text-center align-top" style="width: 50%">
+            Pelaksana CKG<br />
+            <div style="position: relative; display: inline-block">
+              <img
+                src="ttd_199801232022032003.png"
+                alt="Tanda Tangan"
+                style="height: 100px; transform: translateY(20px)"
+              />
+              <div style="margin-top: -10px">
+                <strong>DWIYANTI PRA SETYANINGSIH, A.Md.Kep.</strong><br />
+                19980123 202203 2 003
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <script>
@@ -224,9 +246,10 @@
           <td>${d.CATIN || ""}</td>
           <td>${d["IVA (Papsm)"] || ""}</td>
           <td>${d.CA || ""}</td>
-          <td>${d.Jiwa || ""}</td>
-          <td>${d.Indera || ""}</td>
-          <td>${d.Gigi || ""}</td>
+          <td>${d.JIWA || ""}</td>
+          <td>${d.PENDENGARAN || ""}</td>
+          <td>${d.PENGELIHATAN || ""}</td>
+          <td>${d.Gilut || ""}</td>
           <td>${d.TBC || ""}</td>
           <td>${d.HIV || ""}</td>
           <td>${d.HEP || ""}</td>
