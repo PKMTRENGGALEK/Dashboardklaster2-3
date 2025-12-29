@@ -1,203 +1,286 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CKG PKM TGLK</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    />
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
     <style>
-      .circle-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 300px;
-        aspect-ratio: 1 / 1;
-        border: 4px solid #499be7;
-        border-radius: 50%;
-        overflow: visible;
-        margin: auto;
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        background: white;
-      }
+        /* Import Font yang Ramah dan Modern */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
-      .doctor-image {
-        position: absolute;
-        top: -90px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 220px;
-        max-width: 100%;
-      }
+        :root {
+            --primary-blue: #4facfe;
+            --secondary-blue: #00f2fe;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --white: #ffffff;
+            --accent-orange: #ff9f43;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden; /* Mencegah scrollbar saat animasi background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Background Gradien Langit Cerah */
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+            color: var(--white);
+            position: relative;
+        }
+
+        /* Container Utama */
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Styling Angka 404 yang Besar */
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: -20px;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Efek Glow pada angka 0 */
+        .error-code span {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .error-code span::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            filter: blur(10px);
+        }
+
+        /* SVG Astronot Wrapper */
+        .astronaut-wrapper {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Styling SVG Astronot */
+        .astronaut-svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--white);
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+        }
+
+        /* Aksesoris Tambahan (Tali pengaman yang bergerak) */
+        .tether {
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            width: 100px;
+            height: 2px;
+            background: rgba(255,255,255,0.6);
+            transform-origin: right center;
+            animation: tether-sway 4s ease-in-out infinite alternate;
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--white);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Tombol */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--white);
+            color: var(--primary-blue);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            background-color: var(--accent-orange); /* Efek hover berubah warna oranye */
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Background Elements (Awan & Planet) */
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .planet {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            right: 10%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            animation: rotate 60s linear infinite;
+        }
+        
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20%;
+            width: 140%;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: rotate(-20deg);
+        }
+
+        .cloud {
+            background: #fff;
+            opacity: 0.4;
+            filter: blur(8px);
+        }
+
+        .c1 { width: 300px; height: 60px; top: 20%; left: -10%; animation: drift 25s linear infinite; }
+        .c2 { width: 200px; height: 40px; bottom: 15%; right: -5%; animation: drift 30s linear infinite reverse; }
+        .c3 { width: 100px; height: 30px; top: 60%; left: 10%; opacity: 0.2; animation: drift 20s linear infinite; }
+
+        /* Animasi Keyframes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        @keyframes tether-sway {
+            from { transform: rotate(-5deg); }
+            to { transform: rotate(5deg); }
+        }
+
+        @keyframes drift {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(120vw); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .error-code { font-size: 6rem; }
+            h2 { font-size: 1.5rem; }
+            .astronaut-wrapper { width: 150px; height: 150px; }
+            .planet { width: 80px; height: 80px; top: 5%; right: 5%; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; }
+        }
     </style>
-  </head>
-  <body class="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-800">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md sticky top-0 z-10">
-      <div
-        class="max-w-7xl mx-auto flex flex-wrap justify-between items-center p-4"
-      >
-        <div class="flex items-center space-x-2">
-          <span class="text-pink-500 text-2xl font-bold">➕</span>
-          <h1 class="text-pink-500 text-2xl font-bold">
-            CKG Puskesmas Trenggalek
-          </h1>
-        </div>
-        <ul
-          class="flex flex-wrap space-x-4 text-gray-700 text-sm sm:text-base mt-2 md:mt-0"
-        >
-          <li>
-            <a
-              href="https://pkmtrenggalek.github.io/SIPP"
-              class="hover:text-pink-500 font-medium"
-              >Home</a
-            >
-          </li>
-          <li>
-            <a href="#" class="hover:text-pink-500 font-medium">Screening</a>
-          </li>
-          <li>
-            <a
-              href="https://pkmtrenggalek.github.io/Dashboardklaster2-3-Admin/"
-              class="btn btn-sm hover:text-pink-500 font-medium"
-              >Admin Page</a
-            >
-          </li>
-        </ul>
-      </div>
-    </nav>
+</head>
+<body>
 
-    <!-- Main Content -->
-    <main class="flex-grow mt-10 px-4">
-      <section
-        class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10"
-      >
-        <!-- Peta dan Tombol -->
-        <div class="w-full md:w-1/2 relative">
-          <img
-            src="assets/Peta.jpeg"
-            alt="Peta Wilayah"
-            class="w-full h-auto rounded-lg shadow"
-          />
+    <!-- Elemen Dekorasi Background -->
+    <div class="bg-element planet"></div>
+    <div class="bg-element cloud c1"></div>
+    <div class="bg-element cloud c2"></div>
+    <div class="bg-element cloud c3"></div>
 
-          <div
-            id="button-container"
-            class="absolute inset-0 text-xs sm:text-sm"
-          >
-            <a
-              href="pages/karangsoko.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 80%; left: 45%"
-              >DESA KARANGSOKO</a
-            >
-            <a
-              href="pages/sambirejo.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 58%; left: 59%"
-              >DESA SAMBIREJO</a
-            >
-            <a
-              href="pages/sumbergedong.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 38%; left: 60%"
-              >KEL. SUMBERGEDONG</a
-            >
-            <a
-              href="pages/ngantru.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 10%; left: 35%"
-              >KEL. NGANTRU</a
-            >
-            <a
-              href="pages/kelutan.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 52%; left: 38%"
-              >KEL. KELUTAN</a
-            >
-            <a
-              href="pages/tamanan.html"
-              class="absolute px-2 py-1 bg-white rounded-full font-bold text-black shadow"
-              style="top: 35%; left: 23%"
-              >KEL. TAMANAN</a
-            >
-            <a
-              href="pages/induk.html"
-              class="absolute px-3 py-2 shadow bg-white rounded-full inline-flex items-center gap-2"
-              style="top: 64%; left: 49%; text-decoration: none; color: black"
-            >
-              <i class="bi bi-bank2" style="font-size: 30px"></i>
-              <span class="font-bold">Puskesmas</span>
-            </a>
-          </div>
+    <main class="container">
+        <div class="astronaut-wrapper">
+            <!-- Tali Pengaman -->
+            <div class="tether"></div>
+            
+            <!-- SVG Astronot Sederhana -->
+            <svg class="astronaut-svg" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <!-- Badan -->
+                <path d="M256 112c-48.523 0-88 39.477-88 88v80c0 48.523 39.477 88 88 88s88-39.477 88-88v-80c0-48.523-39.477-88-88-88zm0 16c39.746 0 72 32.254 72 72v80c0 39.746-32.254 72-72 72s-72-32.254-72-72v-80c0-39.746 32.254-72 72-72z"/>
+                <!-- Kepala/Helm -->
+                <circle cx="256" cy="144" r="64" fill="#fff"/>
+                <!-- Visor Kacamata -->
+                <ellipse cx="256" cy="144" rx="40" ry="32" fill="#2d3436"/>
+                <!-- Refleksi di Kacamata -->
+                <ellipse cx="270" cy="130" rx="10" ry="6" fill="#fff" opacity="0.8"/>
+                <!-- Tas Punggung -->
+                <rect x="200" y="104" width="112" height="128" rx="16" fill="#dfe6e9"/>
+                <!-- Lengan Kiri -->
+                <path d="M168 224l-40 48c-8 8-8 24 0 32 8 8 24 8 32 0l32-40" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+                <!-- Lengan Kanan -->
+                <path d="M344 224l40 48c8 8 8 24 0 32-8 8-24 8-32 0l-32-40" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+                <!-- Kaki Kiri -->
+                <path d="M224 368l-24 80c-4 12 4 24 16 24 12 0 20-8 24-20l16-84" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+                <!-- Kaki Kanan -->
+                <path d="M288 368l24 80c4 12-4 24-16 24-12 0-20-8-24-20l-16-84" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+            </svg>
         </div>
 
-        <!-- Dokter dan Tombol -->
-        <div
-          class="w-full md:w-1/2 flex flex-col items-center space-y-6 mt-14 md:mt-0"
-        >
-          <div class="circle-wrapper">
-            <img
-              src="assets/dr.murti.png"
-              alt="Dr. Murti"
-              class="doctor-image"
-            />
-          </div>
-          <div class="flex flex-wrap justify-center gap-4 mt-20">
-            <!-- <a
-              href="pages/induk.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-green-600 hover:bg-green-700 transition shadow"
-              >INDUK</a
-            > -->
-            <a
-              href="report/bidanreport.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-pink-600 hover:bg-pink-700 transition shadow"
-              >REKAP BIDAN</a
-            >
-            <a
-              href="report/perawatreport.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-indigo-600 hover:bg-indigo-700 transition shadow"
-              >REKAP PERAWAT</a
-            >
-            <a
-              href="https://pkmtrenggalek.github.io/CKG_Sekolah/"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-green-600 hover:bg-green-700 transition shadow"
-            >
-              CKG Anak Sekolah
-            </a>
-            <a
-              href="aus-sd.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-pink-600 hover:bg-pink-700 transition shadow"
-            >
-              CKG AUS SD
-            </a>
-            <a
-              href="ckglain.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-purple-600 hover:bg-purple-700 transition shadow"
-            >
-              CKG AUS SLTA
-            </a>
-            <a
-              href="nonmedis.html"
-              class="px-6 py-3 rounded-full text-white font-semibold bg-green-600 hover:bg-green-700 transition shadow"
-            >
-              CKG NON MEDIS
-            </a>
-          </div>
-        </div>
-      </section>
+        <div class="error-code">4<span>0</span>4</div>
+        
+        <h2>Sepertinya Anda Melayang Terlalu Jauh!</h2>
+        
+        <p>
+            Astronot ini mencari halaman yang Anda minta, tapi sepertinya halaman itu telah menghilang di orbit lain. 
+            Jangan khawatir, kita bisa membantu Anda kembali ke Bumi.
+        </p>
+
+       
     </main>
 
-    <!-- Footer -->
-    <footer
-      class="bg-white text-center text-sm text-gray-500 mt-10 py-4 shadow-inner"
-    >
-      <small>&copy; 2025 Puskesmas Trenggalek. All rights reserved.</small>
-    </footer>
-  </body>
+</body>
 </html>
